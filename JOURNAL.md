@@ -1,5 +1,11 @@
 # Journal
 
+## Day 0 — 16:13 — Bootstrap
+
+Bootstrapped typescript/react-vite, react-ink project. Build: npm run build. Test: npm test.
+(Entry written by bootstrap.sh fallback — agent did not complete Phase 6.)
+
+
 <!-- Agent writes entries here, newest at the top. Never delete entries. -->
 <!-- Format: ## Day N — HH:MM — [short title] -->
 
