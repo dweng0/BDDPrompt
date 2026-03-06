@@ -176,7 +176,7 @@ export default function App({ outputPath = "BDD.md" }: AppProps) {
       const path = saveBddFile(finalFeatures);
       setSavedFilePath(path);
       setStep("complete");
-      setTimeout(() => exit(), 100);
+      setTimeout(() => exit(), 1000);
     } else {
       setStep("feature_name");
     }
