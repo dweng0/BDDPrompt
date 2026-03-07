@@ -9,6 +9,7 @@
     "build": "tsc",
     "dev": "tsx src/cli.tsx",
     "web": "vite web",
+    "web:build": "cd web && vite build",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint 'src/**/*.{ts,tsx}' 'tests/**/*.{ts,tsx}'",

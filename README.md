@@ -29,29 +29,39 @@ The generated `BDD.md` file follows the [BAADD](https://github.com/dweng0/BAADD)
 
 ## 🚀 Quick Start
 
-### Requirements
+### Try it Online
+
+🌐 **Live Demo**: [https://dweng0.github.io/BAADD](https://dweng0.github.io/BAADD)
+
+*(If you forked this repo, update the URL to `https://yourusername.github.io/your-repo-name`)*
+
+---
+
+### Run Locally
+
+#### Requirements
 - Node.js 18+
 
-### Install & Run
+#### Install & Run
 
 ```bash
 # Install dependencies
 npm install
 
-# Build the project
-npm run build
-
-# Start the web app
-npm start
-```
-
-Or for development with hot reload:
-
-```bash
-npm run dev
+# Start the web app in development mode
+npm run web
 ```
 
 Then open your browser to the displayed URL (usually `http://localhost:5173`).
+
+#### Build for Production
+
+```bash
+# Build the web app to the docs/ folder (for GitHub Pages)
+npm run web:build
+```
+
+The built app will be in the `docs/` folder, ready for GitHub Pages deployment.
 
 ---
 
@@ -97,9 +107,31 @@ System: My awesome project
 
 ```bash
 npm run dev        # Run with Vite dev server
+npm run web        # Run web app with Vite dev server
+npm run web:build  # Build web app to docs/ folder
 npm test           # Run tests with Vitest
 npm run lint       # Run ESLint
 npm run format     # Run Prettier
+```
+
+## 📦 GitHub Pages Deployment
+
+This project is configured to automatically deploy to GitHub Pages:
+
+1. Go to your repository **Settings** → **Pages**
+2. Under **Build and deployment**, select **GitHub Actions** as the source
+3. Push to the `main` branch — the app will automatically build and deploy
+
+The workflow:
+- Builds the web app to the `docs/` folder
+- Deploys to GitHub Pages on every push to `main`
+
+To deploy manually:
+```bash
+npm run web:build
+git add docs/
+git commit -m "Update GitHub Pages"
+git push
 ```
 
 ---
