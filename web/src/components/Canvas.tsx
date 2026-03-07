@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { FeatureData } from "../types";
 import FeatureCard from "./FeatureCard";
 
@@ -11,12 +11,20 @@ type Props = {
 };
 
 export default function Canvas({ features, onDrop, onDropScenario, onSelectFeature, onSelectScenario }: Props) {
+  const [isDragOver, setIsDragOver] = useState(false);
+
   function handleDragOver(e: React.DragEvent) {
     e.preventDefault();
+    setIsDragOver(true);
+  }
+
+  function handleDragLeave() {
+    setIsDragOver(false);
   }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
+    setIsDragOver(false);
     const nodeType = e.dataTransfer.getData("bdd/node-type");
     if (nodeType && onDrop) onDrop(nodeType);
   }
@@ -24,19 +32,31 @@ export default function Canvas({ features, onDrop, onDropScenario, onSelectFeatu
   return (
     <div
       data-testid="canvas"
-      className="canvas"
+      className={`flex-1 overflow-auto p-6 transition-colors ${
+        isDragOver ? "bg-indigo-50 ring-2 ring-inset ring-indigo-300" : "bg-gray-100"
+      }`}
       onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {features.map((feature, index) => (
-        <FeatureCard
-          key={`${feature.name}-${index}`}
-          feature={feature}
-          onDropScenario={onDropScenario ? () => onDropScenario(index) : undefined}
-          onSelect={onSelectFeature ? () => onSelectFeature(index) : undefined}
-          onSelectScenario={onSelectScenario ? (si) => onSelectScenario(index, si) : undefined}
-        />
-      ))}
+      {features.length === 0 && (
+        <div className="flex flex-col items-center justify-center h-full text-gray-400 select-none pointer-events-none">
+          <span className="text-5xl mb-3">◈</span>
+          <p className="text-lg font-medium">Drag a Feature here to get started</p>
+          <p className="text-sm mt-1">or open an existing BDD.md file</p>
+        </div>
+      )}
+      <div className="flex flex-wrap gap-4 items-start content-start">
+        {features.map((feature, index) => (
+          <FeatureCard
+            key={`${feature.name}-${index}`}
+            feature={feature}
+            onDropScenario={onDropScenario ? () => onDropScenario(index) : undefined}
+            onSelect={onSelectFeature ? () => onSelectFeature(index) : undefined}
+            onSelectScenario={onSelectScenario ? (si) => onSelectScenario(index, si) : undefined}
+          />
+        ))}
+      </div>
     </div>
   );
 }

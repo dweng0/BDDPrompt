@@ -29,6 +29,7 @@ type AppProps = {
 export default function App({ pollInterval = 2000 }: AppProps) {
   const [doc, setDoc] = useState<BddDocument>(emptyDocument);
   const [selection, setSelection] = useState<Selection | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const fileHandleRef = useRef<FileSystemFileHandle | null>(null);
   const lastModifiedRef = useRef<number>(0);
 
@@ -108,6 +109,7 @@ export default function App({ pollInterval = 2000 }: AppProps) {
       fileHandleRef.current = fileHandle;
       const file = await fileHandle.getFile();
       lastModifiedRef.current = file.lastModified;
+      setFileName(file.name);
       const text = await file.text();
       setDoc(parseBdd(text));
       setSelection(null);
@@ -164,25 +166,43 @@ export default function App({ pollInterval = 2000 }: AppProps) {
   }
 
   return (
-    <div className="app">
-      <button data-testid="open-file-btn" onClick={handleOpenFile}>
-        Open BDD.md
-      </button>
-      <Sidebar />
-      <Canvas
-        features={doc.features}
-        onDrop={handleCanvasDrop}
-        onDropScenario={addScenarioToFeature}
-        onSelectFeature={selectFeature}
-        onSelectScenario={selectScenario}
-      />
-      {selection && (
-        <PropertiesPanel
-          selection={selection}
-          onUpdateFeature={updateFeature}
-          onUpdateScenario={updateScenario}
+    <div className="flex flex-col h-screen bg-gray-100 font-sans">
+      {/* Toolbar */}
+      <header className="flex items-center gap-4 px-4 py-2 bg-gray-900 text-white shadow z-10">
+        <span className="font-bold text-lg tracking-tight">bddprompt</span>
+        <button
+          data-testid="open-file-btn"
+          onClick={handleOpenFile}
+          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded text-sm font-medium transition-colors"
+        >
+          Open BDD.md
+        </button>
+        {fileName && (
+          <span className="text-sm text-gray-400">{fileName}</span>
+        )}
+        {fileHandleRef.current && (
+          <span className="ml-auto text-xs text-green-400">● live sync on</span>
+        )}
+      </header>
+
+      {/* Main layout */}
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
+        <Canvas
+          features={doc.features}
+          onDrop={handleCanvasDrop}
+          onDropScenario={addScenarioToFeature}
+          onSelectFeature={selectFeature}
+          onSelectScenario={selectScenario}
         />
-      )}
+        {selection && (
+          <PropertiesPanel
+            selection={selection}
+            onUpdateFeature={updateFeature}
+            onUpdateScenario={updateScenario}
+          />
+        )}
+      </div>
     </div>
   );
 }
