@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
+import { parseBdd } from "../utils/bddParser";
+import { generateBddContent } from "../utils/bddWriter";
+import type { BddDocument } from "../types";
 
 type ChatPanelProps = {
   isOpen: boolean;
+  doc: BddDocument | null;
+  onDocUpdate: (doc: BddDocument) => void;
 };
 
 type Provider = "claude" | "openai";
@@ -10,28 +15,139 @@ type Message = {
   id: string;
   role: "user" | "assistant";
   content: string;
+  error?: boolean;
 };
 
-export default function ChatPanel({ isOpen }: ChatPanelProps) {
+function buildSystemPrompt(doc: BddDocument | null): string {
+  const base =
+    "You are an AI assistant helping with BDD specification files. " +
+    "When proposing changes to the BDD document, wrap your updated BDD document in a ```bdd code block.";
+  if (!doc) return base;
+  const bddText = generateBddContent(doc);
+  return `${base}\n\nThe current BDD document is:\n<bdd>\n${bddText}\n</bdd>`;
+}
+
+async function* streamAnthropic(
+  apiKey: string,
+  systemPrompt: string,
+  messages: { role: string; content: string }[]
+): AsyncGenerator<string, void, unknown> {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-opus-4-6",
+      max_tokens: 4096,
+      stream: true,
+      system: systemPrompt,
+      messages,
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+    throw new Error(err?.error?.message ?? `HTTP ${response.status}`);
+  }
+
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const lines = buf.split("\n");
+    buf = lines.pop() ?? "";
+    for (const line of lines) {
+      if (line.startsWith("data: ")) {
+        const data = line.slice(6);
+        try {
+          const json = JSON.parse(data);
+          if (json.type === "content_block_delta" && json.delta?.type === "text_delta") {
+            yield json.delta.text;
+          }
+        } catch {}
+      }
+    }
+  }
+}
+
+async function* streamOpenAI(
+  apiKey: string,
+  baseUrl: string,
+  systemPrompt: string,
+  messages: { role: string; content: string }[]
+): AsyncGenerator<string, void, unknown> {
+  const url = `${baseUrl || "https://api.openai.com/v1"}/chat/completions`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "gpt-4",
+      stream: true,
+      messages: [{ role: "system", content: systemPrompt }, ...messages],
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+    throw new Error(err?.error?.message ?? `HTTP ${response.status}`);
+  }
+
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const lines = buf.split("\n");
+    buf = lines.pop() ?? "";
+    for (const line of lines) {
+      if (line.startsWith("data: ") && line !== "data: [DONE]") {
+        const data = line.slice(6);
+        try {
+          const json = JSON.parse(data);
+          const text = json.choices?.[0]?.delta?.content;
+          if (text) yield text;
+        } catch {}
+      }
+    }
+  }
+}
+
+function extractBddBlock(text: string): string | null {
+  const match = text.match(/```bdd\n([\s\S]*?)```/);
+  return match ? match[1] : null;
+}
+
+export default function ChatPanel({ isOpen, doc, onDocUpdate }: ChatPanelProps) {
   const [provider, setProvider] = useState<Provider>("claude");
   const [apiKey, setApiKey] = useState("");
   const [baseUrl, setBaseUrl] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const isConfigured = provider && apiKey.length > 0;
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = () => {
-    if (!inputValue.trim() || !isConfigured) return;
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || !isConfigured || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -39,34 +155,53 @@ export default function ChatPanel({ isOpen }: ChatPanelProps) {
       content: inputValue.trim(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const history = [...messages, userMessage];
+    setMessages(history);
     setInputValue("");
+    setIsLoading(true);
 
-    // Simulate streaming response
     const responseId = (Date.now() + 1).toString();
-    setMessages((prev) => [
-      ...prev,
-      { id: responseId, role: "assistant", content: "" },
-    ]);
+    setMessages((prev) => [...prev, { id: responseId, role: "assistant", content: "" }]);
 
-    const responseText = "I'm a simulated assistant response. Streaming functionality will be implemented with real API integration.";
-    let charIndex = 0;
+    const conversationMessages = history.map((m) => ({ role: m.role, content: m.content }));
+    const systemPrompt = buildSystemPrompt(doc);
 
-    const streamInterval = setInterval(() => {
-      if (charIndex >= responseText.length) {
-        clearInterval(streamInterval);
-        return;
+    try {
+      const stream =
+        provider === "claude"
+          ? streamAnthropic(apiKey, systemPrompt, conversationMessages)
+          : streamOpenAI(apiKey, baseUrl, systemPrompt, conversationMessages);
+
+      let fullText = "";
+      for await (const chunk of stream) {
+        fullText += chunk;
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === responseId ? { ...msg, content: fullText } : msg
+          )
+        );
       }
 
+      // Check if the response proposes a BDD update
+      const bddBlock = extractBddBlock(fullText);
+      if (bddBlock) {
+        try {
+          const updatedDoc = parseBdd(bddBlock);
+          onDocUpdate(updatedDoc);
+        } catch {}
+      }
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === responseId
-            ? { ...msg, content: responseText.slice(0, charIndex + 1) }
+            ? { ...msg, content: `Error: ${errorMsg}`, error: true }
             : msg
         )
       );
-      charIndex++;
-    }, 20);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -149,13 +284,15 @@ export default function ChatPanel({ isOpen }: ChatPanelProps) {
                 >
                   <div
                     className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
-                      msg.role === "user"
+                      msg.error
+                        ? "bg-red-900 text-red-200"
+                        : msg.role === "user"
                         ? "bg-purple-600 text-white"
                         : "bg-gray-800 text-gray-200"
                     }`}
                   >
                     {msg.content}
-                    {msg.role === "assistant" && msg.content.length > 0 && (
+                    {msg.role === "assistant" && !msg.error && isLoading && msg.content.length > 0 && (
                       <span className="inline-block w-2 h-4 ml-0.5 bg-purple-400 animate-pulse" />
                     )}
                   </div>
@@ -173,12 +310,12 @@ export default function ChatPanel({ isOpen }: ChatPanelProps) {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              disabled={!isConfigured}
+              disabled={!isConfigured || isLoading}
               placeholder={isConfigured ? "Type a message..." : "Configure API key first"}
               className={`
                 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm
                 focus:outline-none focus:border-purple-500
-                ${!isConfigured ? "opacity-50 cursor-not-allowed" : ""}
+                ${!isConfigured || isLoading ? "opacity-50 cursor-not-allowed" : ""}
               `}
             />
           </div>

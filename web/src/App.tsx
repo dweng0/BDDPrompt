@@ -8,6 +8,7 @@ import FrontmatterBar from "./components/FrontmatterBar";
 import ChatPanel from "./components/ChatPanel";
 import { parseBdd } from "./utils/bddParser";
 import { generateBddContent } from "./utils/bddWriter";
+import { useWebRTC } from "./hooks/useWebRTC";
 
 function emptyDocument(): BddDocument {
   return {
@@ -34,11 +35,16 @@ export default function App({ pollInterval = 2000 }: AppProps) {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
-  const [shareCode, setShareCode] = useState<string | null>(null);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [joinCode, setJoinCode] = useState("");
+  const [joinError, setJoinError] = useState<string | null>(null);
+  const [sessionFull, setSessionFull] = useState(false);
   const fileHandleRef = useRef<FileSystemFileHandle | null>(null);
   const lastModifiedRef = useRef<number>(0);
+
+  const webrtc = useWebRTC({
+    onDocUpdate: (remoteDoc) => setDoc(remoteDoc),
+  });
 
   const writeToFile = useCallback(async (updatedDoc: BddDocument) => {
     const handle = fileHandleRef.current;
@@ -74,6 +80,7 @@ export default function App({ pollInterval = 2000 }: AppProps) {
     setDoc((prev) => {
       const next = updater(prev);
       writeToFile(next);
+      webrtc.broadcastDoc(next);
       return next;
     });
   }
@@ -242,6 +249,26 @@ export default function App({ pollInterval = 2000 }: AppProps) {
     });
   }
 
+  async function handleShare() {
+    try {
+      await webrtc.startHost();
+    } catch {
+      // signaling server unavailable
+    }
+  }
+
+  async function handleJoin() {
+    if (!joinCode.trim()) return;
+    setJoinError(null);
+    try {
+      await webrtc.joinSession(joinCode.trim().toUpperCase());
+      setShowJoinDialog(false);
+      setJoinCode("");
+    } catch {
+      setJoinError("Could not connect. Check the share code and try again.");
+    }
+  }
+
   return (
     <div className="flex flex-col h-screen bg-gray-100 font-sans">
       {/* Toolbar */}
@@ -260,20 +287,33 @@ export default function App({ pollInterval = 2000 }: AppProps) {
         {fileHandleRef.current && (
           <span className="ml-auto text-xs text-green-400">● live sync on</span>
         )}
+
+        {/* Presence indicators */}
+        {webrtc.connectedPeers.length > 0 && (
+          <div data-testid="presence-indicators" className="flex items-center gap-1">
+            {webrtc.connectedPeers.map((peerId) => (
+              <div
+                key={peerId}
+                data-testid={`peer-indicator-${peerId}`}
+                title={`Peer: ${peerId}`}
+                className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold"
+              >
+                {peerId.charAt(0).toUpperCase()}
+              </div>
+            ))}
+          </div>
+        )}
+
         <button
           data-testid="share-btn"
-          onClick={() => {
-            // Generate a random 6-character alphanumeric share code
-            const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-            setShareCode(code);
-          }}
+          onClick={handleShare}
           className="ml-auto px-3 py-1.5 bg-green-600 hover:bg-green-500 rounded text-sm font-medium transition-colors"
         >
           Share
         </button>
         <button
           data-testid="join-btn"
-          onClick={() => setShowJoinDialog(true)}
+          onClick={() => { setShowJoinDialog(true); setJoinError(null); }}
           className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 rounded text-sm font-medium transition-colors"
         >
           Join
@@ -288,16 +328,28 @@ export default function App({ pollInterval = 2000 }: AppProps) {
       </header>
 
       {/* Share Code Display */}
-      {shareCode && (
+      {webrtc.shareCode && (
         <div className="flex items-center gap-2 px-4 py-2 bg-green-900 border-b border-green-700">
           <span className="text-xs text-green-300">Share this code with others:</span>
-          <span data-testid="share-code" className="font-mono font-bold text-green-400">{shareCode}</span>
+          <span data-testid="share-code" className="font-mono font-bold text-green-400">
+            {webrtc.shareCode}
+          </span>
+          <span className="text-xs text-green-400">
+            ({webrtc.connectedPeers.length}/{MAX_PEERS} connected)
+          </span>
           <button
-            onClick={() => setShareCode(null)}
+            onClick={webrtc.disconnect}
             className="ml-auto text-xs text-green-500 hover:text-green-300"
           >
             Close
           </button>
+        </div>
+      )}
+
+      {/* Session Full Banner */}
+      {sessionFull && (
+        <div data-testid="session-full-banner" className="px-4 py-2 bg-red-900 border-b border-red-700 text-sm text-red-200">
+          This session is full (4 users maximum).
         </div>
       )}
 
@@ -312,21 +364,22 @@ export default function App({ pollInterval = 2000 }: AppProps) {
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
               placeholder="Enter share code (e.g., ABC123)"
-              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm mb-4 focus:outline-none focus:border-blue-500"
+              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm mb-2 focus:outline-none focus:border-blue-500"
               maxLength={6}
             />
-            <div className="flex gap-2">
+            {joinError && (
+              <p data-testid="join-error" className="text-red-400 text-xs mb-3">{joinError}</p>
+            )}
+            <div className="flex gap-2 mt-2">
               <button
-                onClick={() => setShowJoinDialog(false)}
+                onClick={() => { setShowJoinDialog(false); setJoinCode(""); setJoinError(null); }}
                 className="flex-1 px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm"
               >
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  // Join logic would go here
-                  setShowJoinDialog(false);
-                }}
+                data-testid="join-confirm-btn"
+                onClick={handleJoin}
                 className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded text-sm font-medium"
               >
                 Join
@@ -365,8 +418,18 @@ export default function App({ pollInterval = 2000 }: AppProps) {
             onUpdateBackground={updateBackground}
           />
         )}
-        <ChatPanel isOpen={chatOpen} />
+        <ChatPanel
+          isOpen={chatOpen}
+          doc={fileName ? doc : null}
+          onDocUpdate={(updatedDoc) => {
+            setDoc(updatedDoc);
+            writeToFile(updatedDoc);
+            webrtc.broadcastDoc(updatedDoc);
+          }}
+        />
       </div>
     </div>
   );
 }
+
+const MAX_PEERS = 3;
