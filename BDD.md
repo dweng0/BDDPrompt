@@ -114,9 +114,9 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
     Feature: WebRTC collaboration
 
         Background:
-            Given a signaling server is available for ICE candidate exchange
-            And STUN servers are configured for NAT traversal
-            And a TURN relay server is configured as fallback for symmetric NAT
+            Given public STUN servers are used for NAT traversal (Google stun.l.google.com:19302 or Cloudflare stun.cloudflare.com:3478, both free)
+            And Open Relay TURN servers (openrelay.metered.ca) are used as free relay fallback for symmetric NAT
+            And a signaling server handles ICE candidate exchange (hosted free on Cloudflare Workers or Railway)
 
         Scenario: host creates a collaboration session and receives a share code
             Given a user has a BDD document loaded on the canvas
