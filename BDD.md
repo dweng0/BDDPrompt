@@ -65,3 +65,102 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
             Given a Scenario card exists inside a Feature card
             When the user clicks the delete button on the Scenario card
             Then the Scenario card is removed from the Feature card
+
+    Feature: LLM chat assistant
+
+        Scenario: user opens the chat panel
+            Given the web app has loaded
+            When the user clicks the chat button
+            Then a chat panel slides open alongside the canvas
+
+        Scenario: user configures an LLM provider with an API key
+            Given the chat panel is open
+            When the user selects a provider (Claude or OpenAI-compatible) and enters an API key
+            Then the chat input becomes active and ready to send messages
+            And the API key is held in memory only and never persisted to disk
+
+        Scenario: user can set a custom OpenAI-compatible base URL
+            Given the chat panel is open and OpenAI-compatible is selected
+            When the user enters a custom base URL
+            Then messages are sent to that endpoint instead of the default
+
+        Scenario: user sends a message and receives a streaming response
+            Given the chat panel is configured with a valid API key
+            When the user types a message and sends it
+            Then the LLM response streams into the chat in real time
+
+        Scenario: LLM receives the current BDD document as context
+            Given a BDD.md file is loaded on the canvas
+            When the user sends any message
+            Then the current BDD document content is included in the system prompt
+
+        Scenario: LLM response proposes a BDD change and the canvas updates
+            Given the chat panel is active with a loaded BDD document
+            When the LLM response contains a valid updated BDD document
+            Then the canvas updates to reflect the proposed changes
+            And the BDD.md file is written with the new content
+
+        Scenario: invalid API key shows an error in the chat panel
+            Given the chat panel is open
+            When the user sends a message with an invalid API key
+            Then an error message is shown in the chat panel
+            And the canvas is not modified
+
+        Scenario: chat history is maintained for the session
+            Given the user has exchanged messages with the LLM
+            When the user sends another message
+            Then the full conversation history is included in the next request
+
+    Feature: WebRTC collaboration
+
+        Background:
+            Given a signaling server is available for ICE candidate exchange
+            And STUN servers are configured for NAT traversal
+            And a TURN relay server is configured as fallback for symmetric NAT
+
+        Scenario: host creates a collaboration session and receives a share code
+            Given a user has a BDD document loaded on the canvas
+            When the user clicks Share and starts a session
+            Then a short alphanumeric share code is displayed
+            And the host begins listening for peer connections via the signaling server
+
+        Scenario: guest joins a session using a share code
+            Given a host session is active with a share code
+            When a guest enters the share code and joins
+            Then a WebRTC peer connection is established between host and guest
+            And the guest receives the current BDD document state from the host
+
+        Scenario: canvas changes sync to all connected peers in real time
+            Given two or more users are in the same session
+            When any user makes a change to the canvas
+            Then the change is broadcast to all other peers within 200ms
+            And all canvases show the same document state
+
+        Scenario: session is limited to four simultaneous users
+            Given a session already has four connected users
+            When a fifth user attempts to join
+            Then they are shown a message that the session is full
+            And no connection is established
+
+        Scenario: user presence indicators show who is in the session
+            Given multiple users are in a session
+            When the user views the toolbar
+            Then they can see an avatar or indicator for each connected user
+
+        Scenario: peer disconnects gracefully and session continues
+            Given three users are in a session
+            When one user closes their browser or loses connection
+            Then the remaining users are notified of the disconnection
+            And the session continues uninterrupted for the remaining peers
+
+        Scenario: LLM chat is shared across all session peers
+            Given a session has multiple users and one has configured an LLM key
+            When any user sends a chat message
+            Then the message and the LLM response are visible to all peers
+            And only the peer with the API key makes the actual LLM API call
+
+        Scenario: TURN relay is used when direct peer connection fails
+            Given two peers cannot establish a direct connection due to NAT
+            When the ICE negotiation falls back to the TURN server
+            Then the session connects via the relay
+            And document sync and chat function identically to a direct connection
