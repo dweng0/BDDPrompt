@@ -1,14 +1,16 @@
 import React from "react";
-import type { FeatureData, ScenarioData } from "../types";
+import type { FeatureData, ScenarioData, BackgroundData } from "../types";
 
 type Selection =
   | { type: "feature"; featureIndex: number; feature: FeatureData }
-  | { type: "scenario"; featureIndex: number; scenarioIndex: number; scenario: ScenarioData };
+  | { type: "scenario"; featureIndex: number; scenarioIndex: number; scenario: ScenarioData }
+  | { type: "background"; featureIndex: number; background: BackgroundData };
 
 type Props = {
   selection: Selection;
   onUpdateFeature: (featureIndex: number, patch: Partial<FeatureData>) => void;
   onUpdateScenario: (featureIndex: number, scenarioIndex: number, patch: Partial<ScenarioData>) => void;
+  onUpdateBackground?: (featureIndex: number, given: string) => void;
 };
 
 function Field({ label, value, onChange, placeholder, multiline }: {
@@ -42,7 +44,27 @@ function Field({ label, value, onChange, placeholder, multiline }: {
   );
 }
 
-export default function PropertiesPanel({ selection, onUpdateFeature, onUpdateScenario }: Props) {
+export default function PropertiesPanel({ selection, onUpdateFeature, onUpdateScenario, onUpdateBackground }: Props) {
+  if (selection.type === "background") {
+    const { background, featureIndex } = selection;
+    return (
+      <aside data-testid="properties-panel" className="w-72 shrink-0 bg-white border-l border-gray-200 p-4 flex flex-col gap-4 overflow-y-auto">
+        <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+          <span className="text-amber-500">⬡</span>
+          <h3 className="font-semibold text-gray-800 text-sm">Background</h3>
+        </div>
+        <Field
+          label="Given"
+          value={background.given}
+          onChange={(v) => onUpdateBackground && onUpdateBackground(featureIndex, v)}
+          placeholder="the system is in state..."
+          multiline
+        />
+        <input data-testid="properties-given-input" type="hidden" value={background.given} readOnly />
+      </aside>
+    );
+  }
+
   if (selection.type === "feature") {
     const { feature, featureIndex } = selection;
     return (

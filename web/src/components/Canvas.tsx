@@ -10,9 +10,12 @@ type Props = {
   onSelectScenario?: (featureIndex: number, scenarioIndex: number) => void;
   onDeleteFeature?: (featureIndex: number) => void;
   onDeleteScenario?: (featureIndex: number, scenarioIndex: number) => void;
+  onDropBackground?: (featureIndex: number) => void;
+  onSelectBackground?: (featureIndex: number) => void;
+  onDeleteBackground?: (featureIndex: number) => void;
 };
 
-export default function Canvas({ features, onDrop, onDropScenario, onSelectFeature, onSelectScenario, onDeleteFeature, onDeleteScenario }: Props) {
+export default function Canvas({ features, onDrop, onDropScenario, onSelectFeature, onSelectScenario, onDeleteFeature, onDeleteScenario, onDropBackground, onSelectBackground, onDeleteBackground }: Props) {
   const [isDragOver, setIsDragOver] = useState(false);
 
   function handleDragOver(e: React.DragEvent) {
@@ -59,6 +62,9 @@ export default function Canvas({ features, onDrop, onDropScenario, onSelectFeatu
             onSelectScenario={onSelectScenario ? (si) => onSelectScenario(index, si) : undefined}
             onDelete={onDeleteFeature ? () => onDeleteFeature(index) : undefined}
             onDeleteScenario={onDeleteScenario ? (si) => onDeleteScenario(index, si) : undefined}
+            onDropBackground={onDropBackground ? () => onDropBackground(index) : undefined}
+            onSelectBackground={onSelectBackground ? () => onSelectBackground(index) : undefined}
+            onDeleteBackground={onDeleteBackground ? () => onDeleteBackground(index) : undefined}
           />
         ))}
       </div>

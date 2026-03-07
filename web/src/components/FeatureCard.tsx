@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import type { FeatureData } from "../types";
 import ScenarioCard from "./ScenarioCard";
+import BackgroundCard from "./BackgroundCard";
 
 type Props = {
   featureIndex: number;
   feature: FeatureData;
   onDropScenario?: () => void;
+  onDropBackground?: () => void;
   onSelect?: () => void;
   onSelectScenario?: (scenarioIndex: number) => void;
+  onSelectBackground?: () => void;
   onDelete?: () => void;
   onDeleteScenario?: (scenarioIndex: number) => void;
+  onDeleteBackground?: () => void;
 };
 
-export default function FeatureCard({ featureIndex, feature, onDropScenario, onSelect, onSelectScenario, onDelete, onDeleteScenario }: Props) {
+export default function FeatureCard({ featureIndex, feature, onDropScenario, onDropBackground, onSelect, onSelectScenario, onSelectBackground, onDelete, onDeleteScenario, onDeleteBackground }: Props) {
   const [isDragOver, setIsDragOver] = useState(false);
 
   function handleDragOver(e: React.DragEvent) {
@@ -31,6 +35,7 @@ export default function FeatureCard({ featureIndex, feature, onDropScenario, onS
     setIsDragOver(false);
     const nodeType = e.dataTransfer.getData("bdd/node-type");
     if (nodeType === "scenario" && onDropScenario) onDropScenario();
+    if (nodeType === "background" && !feature.background && onDropBackground) onDropBackground();
   }
 
   function handleClick(e: React.MouseEvent) {
@@ -72,9 +77,17 @@ export default function FeatureCard({ featureIndex, feature, onDropScenario, onS
           isDragOver ? "bg-emerald-50 ring-2 ring-inset ring-emerald-300" : "bg-white"
         }`}
       >
-        {feature.scenarios.length === 0 && (
+        {feature.background && (
+          <BackgroundCard
+            featureIndex={featureIndex}
+            background={feature.background}
+            onSelect={onSelectBackground ? (e) => { e.stopPropagation(); onSelectBackground(); } : undefined}
+            onDelete={onDeleteBackground ? (e) => { e.stopPropagation(); onDeleteBackground(); } : undefined}
+          />
+        )}
+        {feature.scenarios.length === 0 && !feature.background && (
           <p className="text-xs text-gray-400 text-center mt-4 select-none pointer-events-none">
-            Drop Scenarios here
+            Drop Scenarios or a Background here
           </p>
         )}
         {feature.scenarios.map((scenario, index) => (

@@ -3,6 +3,7 @@ import type { BddDocument, FeatureData, ScenarioData } from "./types";
 import Canvas from "./components/Canvas";
 import Sidebar from "./components/Sidebar";
 import PropertiesPanel, { type Selection } from "./components/PropertiesPanel";
+// Selection type is extended in PropertiesPanel to include background
 import { parseBdd } from "./utils/bddParser";
 import { generateBddContent } from "./utils/bddWriter";
 
@@ -118,6 +119,44 @@ export default function App({ pollInterval = 2000 }: AppProps) {
     }
   }
 
+  function addBackground(featureIndex: number) {
+    setDocAndSave((prev) => ({
+      ...prev,
+      features: prev.features.map((f, i) =>
+        i === featureIndex ? { ...f, background: { given: "" } } : f
+      ),
+    }));
+  }
+
+  function deleteBackground(featureIndex: number) {
+    setDocAndSave((prev) => ({
+      ...prev,
+      features: prev.features.map((f, i) =>
+        i === featureIndex ? { ...f, background: null } : f
+      ),
+    }));
+    setSelection(null);
+  }
+
+  function selectBackground(featureIndex: number) {
+    const bg = doc.features[featureIndex].background;
+    if (bg) setSelection({ type: "background", featureIndex, background: bg });
+  }
+
+  function updateBackground(featureIndex: number, given: string) {
+    setDocAndSave((prev) => ({
+      ...prev,
+      features: prev.features.map((f, i) =>
+        i === featureIndex ? { ...f, background: { given } } : f
+      ),
+    }));
+    setSelection((prev) =>
+      prev?.type === "background" && prev.featureIndex === featureIndex
+        ? { ...prev, background: { given } }
+        : prev
+    );
+  }
+
   function deleteFeature(featureIndex: number) {
     setDocAndSave((prev) => ({
       ...prev,
@@ -213,16 +252,20 @@ export default function App({ pollInterval = 2000 }: AppProps) {
           features={doc.features}
           onDrop={handleCanvasDrop}
           onDropScenario={addScenarioToFeature}
+          onDropBackground={addBackground}
           onSelectFeature={selectFeature}
           onSelectScenario={selectScenario}
+          onSelectBackground={selectBackground}
           onDeleteFeature={deleteFeature}
           onDeleteScenario={deleteScenario}
+          onDeleteBackground={deleteBackground}
         />
         {selection && (
           <PropertiesPanel
             selection={selection}
             onUpdateFeature={updateFeature}
             onUpdateScenario={updateScenario}
+            onUpdateBackground={updateBackground}
           />
         )}
       </div>

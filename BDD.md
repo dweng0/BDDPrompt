@@ -66,6 +66,28 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
             When the user clicks the delete button on the Scenario card
             Then the Scenario card is removed from the Feature card
 
+    Feature: Background on feature cards
+
+        Scenario: background is displayed inside its feature card
+            Given a Feature card has a background defined
+            When the canvas renders
+            Then the background is shown inside the Feature card above the scenarios
+
+        Scenario: user adds a background to a feature card
+            Given a Feature card exists on the canvas with no background
+            When the user drags a Background node from the sidebar into the Feature card
+            Then a Background card appears inside the Feature card
+
+        Scenario: user edits a background via the properties panel
+            Given a Feature card has a background
+            When the user clicks the background card
+            Then the properties panel shows an editable Given field for the background
+
+        Scenario: user deletes a background from a feature card
+            Given a Feature card has a background
+            When the user clicks the delete button on the background card
+            Then the background is removed from the Feature card
+
     Feature: LLM chat assistant
 
         Scenario: user opens the chat panel

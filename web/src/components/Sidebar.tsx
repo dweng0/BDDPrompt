@@ -9,6 +9,13 @@ const PALETTE_ITEMS = [
     icon: "◈",
   },
   {
+    id: "background",
+    label: "Background",
+    description: "Shared Given for all scenarios",
+    color: "bg-amber-100 border-amber-300 text-amber-800",
+    icon: "⬡",
+  },
+  {
     id: "scenario",
     label: "Scenario",
     description: "Given / When / Then",
