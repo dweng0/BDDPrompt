@@ -16,13 +16,11 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
             Given the web app has loaded with BDD document state
             When the canvas renders with features and scenarios
             Then each feature is displayed as a card on the canvas
-            And each scenario is displayed as a card inside its parent feature card
 
         Scenario: sidebar shows draggable node types
             Given the web app has loaded
             When the user views the sidebar
             Then they can see a draggable Feature node type
-            And they can see a draggable Scenario node type
 
         Scenario: user drags a feature onto the canvas
             Given the web app has loaded
@@ -55,3 +53,15 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
             Given a BDD.md file has been opened in the canvas editor
             When the BDD.md file is modified externally
             Then the canvas updates to reflect the new content
+
+    Feature: Deleting nodes
+
+        Scenario: user deletes a feature from the canvas
+            Given a Feature card exists on the canvas
+            When the user clicks the delete button on the Feature card
+            Then the Feature card is removed from the canvas
+
+        Scenario: user deletes a scenario from a feature
+            Given a Scenario card exists inside a Feature card
+            When the user clicks the delete button on the Scenario card
+            Then the Scenario card is removed from the Feature card

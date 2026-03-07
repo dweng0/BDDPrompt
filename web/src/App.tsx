@@ -118,6 +118,27 @@ export default function App({ pollInterval = 2000 }: AppProps) {
     }
   }
 
+  function deleteFeature(featureIndex: number) {
+    setDocAndSave((prev) => ({
+      ...prev,
+      features: prev.features.filter((_, i) => i !== featureIndex),
+    }));
+    setSelection(null);
+  }
+
+  function deleteScenario(featureIndex: number, scenarioIndex: number) {
+    setDocAndSave((prev) => ({
+      ...prev,
+      features: prev.features.map((f, fi) =>
+        fi !== featureIndex ? f : {
+          ...f,
+          scenarios: f.scenarios.filter((_, si) => si !== scenarioIndex),
+        }
+      ),
+    }));
+    setSelection(null);
+  }
+
   function updateFeature(featureIndex: number, patch: Partial<FeatureData>) {
     setDocAndSave((prev) => {
       const features = prev.features.map((f, i) =>
@@ -194,6 +215,8 @@ export default function App({ pollInterval = 2000 }: AppProps) {
           onDropScenario={addScenarioToFeature}
           onSelectFeature={selectFeature}
           onSelectScenario={selectScenario}
+          onDeleteFeature={deleteFeature}
+          onDeleteScenario={deleteScenario}
         />
         {selection && (
           <PropertiesPanel

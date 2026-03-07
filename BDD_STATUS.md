@@ -1,6 +1,6 @@
 # BDD Status
 
-Checked 8 scenario(s) across 13 test file(s).
+Checked 10 scenario(s) across 14 test file(s).
 
 
 ## Feature: Visual BDD Canvas
@@ -17,5 +17,10 @@ Checked 8 scenario(s) across 13 test file(s).
 - [x] canvas writes BDD.md when changes are made
 - [x] external changes to BDD.md are reflected on the canvas
 
+## Feature: Deleting nodes
+
+- [x] user deletes a feature from the canvas
+- [x] user deletes a scenario from a feature
+
 ---
-**8/8 scenarios covered.**
+**10/10 scenarios covered.**

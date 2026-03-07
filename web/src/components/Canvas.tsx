@@ -8,9 +8,11 @@ type Props = {
   onDropScenario?: (featureIndex: number) => void;
   onSelectFeature?: (featureIndex: number) => void;
   onSelectScenario?: (featureIndex: number, scenarioIndex: number) => void;
+  onDeleteFeature?: (featureIndex: number) => void;
+  onDeleteScenario?: (featureIndex: number, scenarioIndex: number) => void;
 };
 
-export default function Canvas({ features, onDrop, onDropScenario, onSelectFeature, onSelectScenario }: Props) {
+export default function Canvas({ features, onDrop, onDropScenario, onSelectFeature, onSelectScenario, onDeleteFeature, onDeleteScenario }: Props) {
   const [isDragOver, setIsDragOver] = useState(false);
 
   function handleDragOver(e: React.DragEvent) {
@@ -50,10 +52,13 @@ export default function Canvas({ features, onDrop, onDropScenario, onSelectFeatu
         {features.map((feature, index) => (
           <FeatureCard
             key={`${feature.name}-${index}`}
+            featureIndex={index}
             feature={feature}
             onDropScenario={onDropScenario ? () => onDropScenario(index) : undefined}
             onSelect={onSelectFeature ? () => onSelectFeature(index) : undefined}
             onSelectScenario={onSelectScenario ? (si) => onSelectScenario(index, si) : undefined}
+            onDelete={onDeleteFeature ? () => onDeleteFeature(index) : undefined}
+            onDeleteScenario={onDeleteScenario ? (si) => onDeleteScenario(index, si) : undefined}
           />
         ))}
       </div>

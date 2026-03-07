@@ -3,13 +3,16 @@ import type { FeatureData } from "../types";
 import ScenarioCard from "./ScenarioCard";
 
 type Props = {
+  featureIndex: number;
   feature: FeatureData;
   onDropScenario?: () => void;
   onSelect?: () => void;
   onSelectScenario?: (scenarioIndex: number) => void;
+  onDelete?: () => void;
+  onDeleteScenario?: (scenarioIndex: number) => void;
 };
 
-export default function FeatureCard({ feature, onDropScenario, onSelect, onSelectScenario }: Props) {
+export default function FeatureCard({ featureIndex, feature, onDropScenario, onSelect, onSelectScenario, onDelete, onDeleteScenario }: Props) {
   const [isDragOver, setIsDragOver] = useState(false);
 
   function handleDragOver(e: React.DragEvent) {
@@ -35,6 +38,11 @@ export default function FeatureCard({ feature, onDropScenario, onSelect, onSelec
     if (onSelect) onSelect();
   }
 
+  function handleDelete(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (onDelete) onDelete();
+  }
+
   return (
     <div
       data-testid={`feature-card-${feature.name}`}
@@ -47,10 +55,18 @@ export default function FeatureCard({ feature, onDropScenario, onSelect, onSelec
       {/* Header */}
       <div className="bg-indigo-600 px-4 py-3 flex items-center gap-2">
         <span className="text-indigo-200 text-sm">◈</span>
-        <h2 className="text-white font-semibold text-sm truncate">{feature.name}</h2>
+        <h2 className="text-white font-semibold text-sm truncate flex-1">{feature.name}</h2>
+        <button
+          data-testid={`delete-feature-${featureIndex}`}
+          onClick={handleDelete}
+          className="text-indigo-300 hover:text-white transition-colors text-xs px-1"
+          title="Delete feature"
+        >
+          ✕
+        </button>
       </div>
 
-      {/* Scenario drop zone */}
+      {/* Scenario list */}
       <div
         className={`p-3 min-h-24 flex flex-col gap-2 transition-colors ${
           isDragOver ? "bg-emerald-50 ring-2 ring-inset ring-emerald-300" : "bg-white"
@@ -64,8 +80,11 @@ export default function FeatureCard({ feature, onDropScenario, onSelect, onSelec
         {feature.scenarios.map((scenario, index) => (
           <ScenarioCard
             key={`${scenario.name}-${index}`}
+            featureIndex={featureIndex}
+            scenarioIndex={index}
             scenario={scenario}
             onSelect={onSelectScenario ? (e) => { e.stopPropagation(); onSelectScenario(index); } : undefined}
+            onDelete={onDeleteScenario ? (e) => { e.stopPropagation(); onDeleteScenario(index); } : undefined}
           />
         ))}
       </div>
