@@ -1,72 +1,89 @@
-# bdd-wizard
-
 <div align="center">
-<img src="cute_sheep.svg" width="180" alt="BAADD sheep mascot"/>
+
+<img src="cute_sheep.svg" width="120" alt="BAADD sheep mascot"/>
+
+# 🌟 bddprompt
+
+**A delightful visual editor for BDD specifications**
+
+*Drag, drop, and collaborate on your BDD specs with ease*
+
+<img src="docs/screenshot.png" width="800" alt="bddprompt interface showing a visual canvas with feature cards and scenario cards"/>
+
 </div>
 
-A React Ink CLI tool for generating BDD specification files in the [BAADD](https://github.com/dweng0/BAADD) format.
+---
+
+## ✨ What is bddprompt?
+
+**bddprompt** is a visual, drag-and-drop web application that makes writing [BDD](https://en.wikipedia.org/wiki/Behavior-driven_development) (Behavior-Driven Development) specifications actually enjoyable! Instead of wrestling with markdown files, you build your specs on an interactive canvas:
+
+- 🎯 **Drag & Drop** — Build your BDD document by dragging Feature, Scenario, and Background cards onto the canvas
+- 📝 **Live Sync** — Your changes automatically sync to a `BDD.md` file (and vice versa!)
+- 🤖 **AI Assistant** — Chat with an LLM to help refine your specs (Claude or OpenAI-compatible)
+- 🔗 **Real-time Collaboration** — Work together with your team using WebRTC (up to 4 peers)
+
+The generated `BDD.md` file follows the [BAADD](https://github.com/dweng0/BAADD) format — a specification-driven framework where AI agents can read your BDD specs and help bring them to life.
 
 ---
 
-## What it does
+## 🚀 Quick Start
 
-`bdd-wizard` walks you through an interactive terminal UI to build a `BDD.md` file — the spec file consumed by the BAADD self-coding framework. It guides you through:
-
-- Frontmatter (language, framework, build/test/lint/format commands)
-- System description
-- Features, scenarios, and backgrounds
-- Saving the finished spec to your project
-
----
-
-## Requirements
-
+### Requirements
 - Node.js 18+
 
----
-
-## Install
+### Install & Run
 
 ```bash
+# Install dependencies
 npm install
+
+# Build the project
 npm run build
+
+# Start the web app
+npm start
 ```
 
-## Run
-
-```bash
-node dist/cli.js
-```
-
-Or during development:
+Or for development with hot reload:
 
 ```bash
 npm run dev
 ```
 
+Then open your browser to the displayed URL (usually `http://localhost:5173`).
+
 ---
 
-## What gets generated
+## 🎨 How to Use
 
-A `BDD.md` file with YAML frontmatter and Gherkin-style scenarios:
+1. **Open a BDD.md file** — Click "Open BDD.md" in the header to load an existing spec
+2. **Drag from the palette** — Pull Feature, Background, or Scenario cards onto the canvas
+3. **Nest scenarios** — Drop Scenario cards inside Feature cards to organize them
+4. **Edit in the sidebar** — Click any card to edit its properties in the right panel
+5. **Chat with AI** — Open the chat panel to get help refining your specifications
+6. **Collaborate** — Click Share to start a collaboration session with your team
+
+Your changes are automatically saved to the BDD.md file!
+
+---
+
+## 📁 Example Output
+
+Here's what a generated `BDD.md` file looks like:
 
 ```markdown
 ---
 language: typescript
-framework: react-ink
+framework: vite, react, dnd-kit
 build_cmd: npm run build
 test_cmd: npm test
-lint_cmd: npm run lint
-fmt_cmd: npm run format
-birth_date: 2026-03-05
+birth_date: 2026-03-06
 ---
 
-System: A CLI tool that does X
+System: My awesome project
 
-    Feature: User login
-        As a user
-        I want to log in
-        So that I can access my account
+    Feature: User authentication
 
         Scenario: Successful login
             Given I am on the login page
@@ -74,21 +91,27 @@ System: A CLI tool that does X
             Then I am redirected to the dashboard
 ```
 
-Copy this file into a fork of the BAADD repo and watch your desires come to life file is then used by the BAADD agent to drive automated code generation.
-
 ---
 
-## Development
+## 🧪 Development
 
 ```bash
-npm run dev        # run with tsx (no build step)
-npm test           # run tests with vitest
-npm run lint       # eslint
-npm run format     # prettier
+npm run dev        # Run with Vite dev server
+npm test           # Run tests with Vitest
+npm run lint       # Run ESLint
+npm run format     # Run Prettier
 ```
 
 ---
 
-## Origin
+## 🐑 About BAADD
 
-Forked from [dweng0/BAADD](https://github.com/dweng0/BAADD) — a framework where an AI agent builds and maintains a project driven entirely by a `BDD.md` spec file.
+This project is part of the [BAADD](https://github.com/dweng0/BAADD) ecosystem — a framework where an AI agent builds and maintains projects driven entirely by a `BDD.md` spec file. Write the behavior, watch it come to life!
+
+---
+
+<div align="center">
+
+Made with 💜 and a very cute sheep
+
+</div>
