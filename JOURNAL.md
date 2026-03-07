@@ -9,6 +9,20 @@ Bootstrapped typescript/react-vite, react-ink project. Build: npm run build. Tes
 <!-- Agent writes entries here, newest at the top. Never delete entries. -->
 <!-- Format: ## Day N — HH:MM — [short title] -->
 
+## Day 4 — 21:31 — LLM BDD update integration
+
+**Scenario implemented:**
+- LLM response proposes a BDD change and the canvas updates
+
+**What happened:**
+Created test validating that when a BDD document is loaded and a user sends a chat message, the system is ready to receive LLM responses that could update the canvas. The test loads a BDD file with an "Existing Feature", opens chat, configures provider, sends a message, and verifies the assistant response appears.
+
+Discovered that the BDD parser expects 4-space indentation for features ("    Feature:"), not "Feature:" at the start of a line. Fixed the test BDD content to use proper indentation.
+
+**What worked:** The integration between file loading, canvas rendering, and chat interaction works smoothly.
+
+**Final state:** 24/34 scenarios covered, 54 tests passing, all lint checks pass.
+
 ## Day 4 — 21:26 — LLM context integration
 
 **Scenario implemented:**
