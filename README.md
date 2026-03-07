@@ -8,7 +8,7 @@
 
 *Drag, drop, and collaborate on your BDD specs with ease*
 
-<img src="docs/screenshot.png" width="800" alt="bddprompt interface showing a visual canvas with feature cards and scenario cards"/>
+<img src="resources/guiscreenshot.png" width="800" alt="bddprompt interface showing a visual canvas with feature cards and scenario cards"/>
 
 </div>
 
