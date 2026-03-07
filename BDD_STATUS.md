@@ -1,6 +1,6 @@
 # BDD Status
 
-Checked 8 scenario(s) across 10 test file(s).
+Checked 8 scenario(s) across 11 test file(s).
 
 
 ## Feature: Visual BDD Canvas

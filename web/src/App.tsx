@@ -3,6 +3,7 @@ import type { BddDocument, FeatureData, ScenarioData } from "./types";
 import Canvas from "./components/Canvas";
 import Sidebar from "./components/Sidebar";
 import PropertiesPanel, { type Selection } from "./components/PropertiesPanel";
+import { parseBdd } from "./utils/bddParser";
 
 function emptyDocument(): BddDocument {
   return {
@@ -54,6 +55,20 @@ export default function App() {
     if (nodeType === "feature") addFeature();
   }
 
+  async function handleOpenFile() {
+    try {
+      const [fileHandle] = await (window as any).showOpenFilePicker({
+        types: [{ description: "BDD files", accept: { "text/markdown": [".md"] } }],
+      });
+      const file = await fileHandle.getFile();
+      const text = await file.text();
+      setDoc(parseBdd(text));
+      setSelection(null);
+    } catch {
+      // user cancelled
+    }
+  }
+
   function updateFeature(featureIndex: number, patch: Partial<FeatureData>) {
     setDoc((prev) => {
       const features = prev.features.map((f, i) =>
@@ -103,6 +118,9 @@ export default function App() {
 
   return (
     <div className="app">
+      <button data-testid="open-file-btn" onClick={handleOpenFile}>
+        Open BDD.md
+      </button>
       <Sidebar />
       <Canvas
         features={doc.features}
