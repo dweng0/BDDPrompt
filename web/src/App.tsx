@@ -4,6 +4,7 @@ import Canvas from "./components/Canvas";
 import Sidebar from "./components/Sidebar";
 import PropertiesPanel, { type Selection } from "./components/PropertiesPanel";
 // Selection type is extended in PropertiesPanel to include background
+import FrontmatterBar from "./components/FrontmatterBar";
 import { parseBdd } from "./utils/bddParser";
 import { generateBddContent } from "./utils/bddWriter";
 
@@ -117,6 +118,17 @@ export default function App({ pollInterval = 2000 }: AppProps) {
     } catch {
       // user cancelled
     }
+  }
+
+  function updateFrontmatter(patch: Partial<BddDocument["frontmatter"]>) {
+    setDocAndSave((prev) => ({
+      ...prev,
+      frontmatter: { ...prev.frontmatter, ...patch },
+    }));
+  }
+
+  function updateSystemDescription(value: string) {
+    setDocAndSave((prev) => ({ ...prev, system_description: value }));
   }
 
   function addBackground(featureIndex: number) {
@@ -244,6 +256,12 @@ export default function App({ pollInterval = 2000 }: AppProps) {
           <span className="ml-auto text-xs text-green-400">● live sync on</span>
         )}
       </header>
+
+      <FrontmatterBar
+        doc={doc}
+        onUpdateFrontmatter={updateFrontmatter}
+        onUpdateSystem={updateSystemDescription}
+      />
 
       {/* Main layout */}
       <div className="flex flex-1 overflow-hidden">

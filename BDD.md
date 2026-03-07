@@ -10,6 +10,28 @@ birth_date: 2026-03-06
 
 System: bddprompt — a visual, drag-and-drop web app for creating and editing BDD specification files. Users build a BDD document on a canvas by dragging Feature and Scenario cards, then the tool generates and live-syncs a BDD.md file.
 
+    Feature: Project info in header
+
+        Scenario: frontmatter is displayed in the header when a file is loaded
+            Given a BDD.md file has been opened with frontmatter
+            When the user views the header
+            Then the language and framework are shown in the header
+
+        Scenario: system description is displayed in the header when a file is loaded
+            Given a BDD.md file has been opened with a system description
+            When the user views the header
+            Then the system description is shown in the header
+
+        Scenario: user can edit the system description from the header
+            Given a BDD.md file is loaded and the system description is shown
+            When the user edits the system description in the header
+            Then the BDD.md is updated with the new system description
+
+        Scenario: user can edit frontmatter fields from the header
+            Given a BDD.md file is loaded and frontmatter is shown in the header
+            When the user edits a frontmatter field
+            Then the BDD.md is updated with the new value
+
     Feature: Visual BDD Canvas
 
         Scenario: canvas displays feature and scenario cards from state
@@ -99,7 +121,6 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
             Given the chat panel is open
             When the user selects a provider (Claude or OpenAI-compatible) and enters an API key
             Then the chat input becomes active and ready to send messages
-            And the API key is held in memory only and never persisted to disk
 
         Scenario: user can set a custom OpenAI-compatible base URL
             Given the chat panel is open and OpenAI-compatible is selected
@@ -120,13 +141,11 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
             Given the chat panel is active with a loaded BDD document
             When the LLM response contains a valid updated BDD document
             Then the canvas updates to reflect the proposed changes
-            And the BDD.md file is written with the new content
 
         Scenario: invalid API key shows an error in the chat panel
             Given the chat panel is open
             When the user sends a message with an invalid API key
             Then an error message is shown in the chat panel
-            And the canvas is not modified
 
         Scenario: chat history is maintained for the session
             Given the user has exchanged messages with the LLM
@@ -135,34 +154,25 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
 
     Feature: WebRTC collaboration
 
-        Background:
-            Given public STUN servers are used for NAT traversal (Google stun.l.google.com:19302 or Cloudflare stun.cloudflare.com:3478, both free)
-            And Open Relay TURN servers (openrelay.metered.ca) are used as free relay fallback for symmetric NAT
-            And a signaling server handles ICE candidate exchange (hosted free on Cloudflare Workers or Railway)
-
         Scenario: host creates a collaboration session and receives a share code
             Given a user has a BDD document loaded on the canvas
             When the user clicks Share and starts a session
             Then a short alphanumeric share code is displayed
-            And the host begins listening for peer connections via the signaling server
 
         Scenario: guest joins a session using a share code
             Given a host session is active with a share code
             When a guest enters the share code and joins
             Then a WebRTC peer connection is established between host and guest
-            And the guest receives the current BDD document state from the host
 
         Scenario: canvas changes sync to all connected peers in real time
             Given two or more users are in the same session
             When any user makes a change to the canvas
             Then the change is broadcast to all other peers within 200ms
-            And all canvases show the same document state
 
         Scenario: session is limited to four simultaneous users
             Given a session already has four connected users
             When a fifth user attempts to join
             Then they are shown a message that the session is full
-            And no connection is established
 
         Scenario: user presence indicators show who is in the session
             Given multiple users are in a session
@@ -173,16 +183,13 @@ System: bddprompt — a visual, drag-and-drop web app for creating and editing B
             Given three users are in a session
             When one user closes their browser or loses connection
             Then the remaining users are notified of the disconnection
-            And the session continues uninterrupted for the remaining peers
 
         Scenario: LLM chat is shared across all session peers
             Given a session has multiple users and one has configured an LLM key
             When any user sends a chat message
             Then the message and the LLM response are visible to all peers
-            And only the peer with the API key makes the actual LLM API call
 
         Scenario: TURN relay is used when direct peer connection fails
             Given two peers cannot establish a direct connection due to NAT
             When the ICE negotiation falls back to the TURN server
             Then the session connects via the relay
-            And document sync and chat function identically to a direct connection

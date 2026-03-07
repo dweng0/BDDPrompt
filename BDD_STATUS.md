@@ -1,7 +1,14 @@
 # BDD Status
 
-Checked 30 scenario(s) across 15 test file(s).
+Checked 34 scenario(s) across 16 test file(s).
 
+
+## Feature: Project info in header
+
+- [x] frontmatter is displayed in the header when a file is loaded
+- [x] system description is displayed in the header when a file is loaded
+- [x] user can edit the system description from the header
+- [x] user can edit frontmatter fields from the header
 
 ## Feature: Visual BDD Canvas
 
@@ -41,5 +48,3 @@ Checked 30 scenario(s) across 15 test file(s).
 - [ ] UNCOVERED: chat history is maintained for the session
 
 ## Feature: WebRTC collaboration
-
-- [ ] UNCOVERED: host creates a collaboration session and receives a share code
