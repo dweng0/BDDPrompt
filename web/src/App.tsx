@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import type { BddDocument, FeatureData } from "./types";
+import type { BddDocument, FeatureData, ScenarioData } from "./types";
 import Canvas from "./components/Canvas";
 import Sidebar from "./components/Sidebar";
+import PropertiesPanel, { type Selection } from "./components/PropertiesPanel";
 
 function emptyDocument(): BddDocument {
   return {
@@ -21,16 +22,15 @@ function emptyDocument(): BddDocument {
 
 export default function App() {
   const [doc, setDoc] = useState<BddDocument>(emptyDocument);
+  const [selection, setSelection] = useState<Selection | null>(null);
 
   function addFeature() {
-    const newFeature: FeatureData = {
-      name: "New Feature",
-      background: null,
-      scenarios: [],
-    };
     setDoc((prev) => ({
       ...prev,
-      features: [...prev.features, newFeature],
+      features: [
+        ...prev.features,
+        { name: "New Feature", background: null, scenarios: [] },
+      ],
     }));
   }
 
@@ -54,6 +54,53 @@ export default function App() {
     if (nodeType === "feature") addFeature();
   }
 
+  function updateFeature(featureIndex: number, patch: Partial<FeatureData>) {
+    setDoc((prev) => {
+      const features = prev.features.map((f, i) =>
+        i === featureIndex ? { ...f, ...patch } : f
+      );
+      return { ...prev, features };
+    });
+    setSelection((prev) =>
+      prev?.type === "feature" && prev.featureIndex === featureIndex
+        ? { ...prev, feature: { ...prev.feature, ...patch } }
+        : prev
+    );
+  }
+
+  function updateScenario(featureIndex: number, scenarioIndex: number, patch: Partial<ScenarioData>) {
+    setDoc((prev) => {
+      const features = prev.features.map((f, fi) => {
+        if (fi !== featureIndex) return f;
+        return {
+          ...f,
+          scenarios: f.scenarios.map((s, si) =>
+            si === scenarioIndex ? { ...s, ...patch } : s
+          ),
+        };
+      });
+      return { ...prev, features };
+    });
+    setSelection((prev) =>
+      prev?.type === "scenario" && prev.featureIndex === featureIndex && prev.scenarioIndex === scenarioIndex
+        ? { ...prev, scenario: { ...prev.scenario, ...patch } }
+        : prev
+    );
+  }
+
+  function selectFeature(featureIndex: number) {
+    setSelection({ type: "feature", featureIndex, feature: doc.features[featureIndex] });
+  }
+
+  function selectScenario(featureIndex: number, scenarioIndex: number) {
+    setSelection({
+      type: "scenario",
+      featureIndex,
+      scenarioIndex,
+      scenario: doc.features[featureIndex].scenarios[scenarioIndex],
+    });
+  }
+
   return (
     <div className="app">
       <Sidebar />
@@ -61,7 +108,16 @@ export default function App() {
         features={doc.features}
         onDrop={handleCanvasDrop}
         onDropScenario={addScenarioToFeature}
+        onSelectFeature={selectFeature}
+        onSelectScenario={selectScenario}
       />
+      {selection && (
+        <PropertiesPanel
+          selection={selection}
+          onUpdateFeature={updateFeature}
+          onUpdateScenario={updateScenario}
+        />
+      )}
     </div>
   );
 }

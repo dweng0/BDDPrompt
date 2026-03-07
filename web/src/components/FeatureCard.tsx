@@ -5,9 +5,11 @@ import ScenarioCard from "./ScenarioCard";
 type Props = {
   feature: FeatureData;
   onDropScenario?: () => void;
+  onSelect?: () => void;
+  onSelectScenario?: (scenarioIndex: number) => void;
 };
 
-export default function FeatureCard({ feature, onDropScenario }: Props) {
+export default function FeatureCard({ feature, onDropScenario, onSelect, onSelectScenario }: Props) {
   function handleDragOver(e: React.DragEvent) {
     e.preventDefault();
     e.stopPropagation();
@@ -20,17 +22,27 @@ export default function FeatureCard({ feature, onDropScenario }: Props) {
     if (nodeType === "scenario" && onDropScenario) onDropScenario();
   }
 
+  function handleClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (onSelect) onSelect();
+  }
+
   return (
     <div
       data-testid={`feature-card-${feature.name}`}
       className="feature-card"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
+      onClick={handleClick}
     >
       <h2>{feature.name}</h2>
       <div className="feature-card__scenarios">
-        {feature.scenarios.map((scenario) => (
-          <ScenarioCard key={scenario.name} scenario={scenario} />
+        {feature.scenarios.map((scenario, index) => (
+          <ScenarioCard
+            key={`${scenario.name}-${index}`}
+            scenario={scenario}
+            onSelect={onSelectScenario ? (e) => { e.stopPropagation(); onSelectScenario(index); } : undefined}
+          />
         ))}
       </div>
     </div>

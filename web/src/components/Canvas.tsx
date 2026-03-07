@@ -6,9 +6,11 @@ type Props = {
   features: FeatureData[];
   onDrop?: (nodeType: string) => void;
   onDropScenario?: (featureIndex: number) => void;
+  onSelectFeature?: (featureIndex: number) => void;
+  onSelectScenario?: (featureIndex: number, scenarioIndex: number) => void;
 };
 
-export default function Canvas({ features, onDrop, onDropScenario }: Props) {
+export default function Canvas({ features, onDrop, onDropScenario, onSelectFeature, onSelectScenario }: Props) {
   function handleDragOver(e: React.DragEvent) {
     e.preventDefault();
   }
@@ -31,6 +33,8 @@ export default function Canvas({ features, onDrop, onDropScenario }: Props) {
           key={`${feature.name}-${index}`}
           feature={feature}
           onDropScenario={onDropScenario ? () => onDropScenario(index) : undefined}
+          onSelect={onSelectFeature ? () => onSelectFeature(index) : undefined}
+          onSelectScenario={onSelectScenario ? (si) => onSelectScenario(index, si) : undefined}
         />
       ))}
     </div>
