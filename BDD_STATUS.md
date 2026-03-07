@@ -1,37 +1,50 @@
 # BDD Status
 
-Checked 21 scenario(s) across 4 test file(s).
+Checked 34 scenario(s) across 16 test file(s).
 
 
-## Feature: Add the front matter to the BDD file
+## Feature: Project info in header
 
-- [x] Allow a user to specify the language
-- [x] Allow a user to specify the framework
-- [x] Allow a user to optionally specify the build command
-- [x] Allow a user to not need to provide a build command
-- [x] Allow a user to optionally specify the test command
-- [x] Allow a user to not need to provide a test command
-- [x] Allow a user to optionally specify the lint command
-- [x] Allow a user to not need to provide a lint command
-- [x] Allow a user to optionally specify the format command
-- [x] Allow a user to not need to provide a format command
-- [x] The birthdate of the project should be added to the frontmatter of the bdd file
-- [x] The user should be able to not provide a system description through user input
-- [x] Adding features to the BDD file through user input
-- [x] A user wants to be able to provide a Scenario for a feature through user input
-- [x] a user should be able to add 0 or more backgrounds to a feature through user input
-- [x] Adding scenarios to the feature through user input
-- [x] Cancelling adding a scenario to the feature through user input
-- [x] Cancelling adding a background to the feature through user input
-- [x] Completing the BDD
+- [x] frontmatter is displayed in the header when a file is loaded
+- [x] system description is displayed in the header when a file is loaded
+- [x] user can edit the system description from the header
+- [x] user can edit frontmatter fields from the header
 
-## Feature: Distribution
+## Feature: Visual BDD Canvas
 
-- [x] A user can build the tool using a build script
+- [x] canvas displays feature and scenario cards from state
+- [x] sidebar shows draggable node types
+- [x] user drags a feature onto the canvas
+- [x] user drags a scenario into a feature card
+- [x] user edits a card via the properties panel
 
-## Feature: Application branding
+## Feature: BDD.md live sync
 
-- [x] A sheep mascot is displayed when the application starts
+- [x] user opens a BDD.md file and it populates the canvas
+- [x] canvas writes BDD.md when changes are made
+- [x] external changes to BDD.md are reflected on the canvas
 
----
-**21/21 scenarios covered.**
+## Feature: Deleting nodes
+
+- [x] user deletes a feature from the canvas
+- [x] user deletes a scenario from a feature
+
+## Feature: Background on feature cards
+
+- [x] background is displayed inside its feature card
+- [x] user adds a background to a feature card
+- [x] user edits a background via the properties panel
+- [x] user deletes a background from a feature card
+
+## Feature: LLM chat assistant
+
+- [ ] UNCOVERED: user opens the chat panel
+- [ ] UNCOVERED: user configures an LLM provider with an API key
+- [ ] UNCOVERED: user can set a custom OpenAI-compatible base URL
+- [ ] UNCOVERED: user sends a message and receives a streaming response
+- [ ] UNCOVERED: LLM receives the current BDD document as context
+- [ ] UNCOVERED: LLM response proposes a BDD change and the canvas updates
+- [ ] UNCOVERED: invalid API key shows an error in the chat panel
+- [ ] UNCOVERED: chat history is maintained for the session
+
+## Feature: WebRTC collaboration

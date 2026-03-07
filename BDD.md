@@ -1,152 +1,195 @@
 ---
 language: typescript
-framework: react-vite, react-ink
-build_cmd: npm run build
-test_cmd: npm test
-lint_cmd: npm run lint
-fmt_cmd: npm run format
-birth_date: 2026-03-05
+framework: vite, react, dnd-kit, tailwind
+build_cmd: build
+test_cmd: test
+lint_cmd: lint
+fmt_cmd: fmt
+birth_date: 2026-03-06
 ---
 
-You must only write code and tests that meet the features and scenarios of this behaviour driven development document. Never use emojis in your code or tests.
+System: bddprompt — a visual, drag-and-drop web app for creating and editing BDD specification files. Users build a BDD document on a canvas by dragging Feature and Scenario cards, then the tool generates and live-syncs a BDD.md file.
 
-System: A react cli tool that allows you to create a BDD file in the same format as this one. using react-ink
+    Feature: Project info in header
 
-    Feature: Add the front matter to the BDD file
-        As a user
-        I want to be able to put in the what language and framework i wish to build my project in
-        So that it can be added to my BDD file and used for my project.
+        Scenario: frontmatter is displayed in the header when a file is loaded
+            Given a BDD.md file has been opened with frontmatter
+            When the user views the header
+            Then the language and framework are shown in the header
 
-        Background: [Optional — shared precondition for all scenarios in this feature]
-            Given [shared precondition]
+        Scenario: system description is displayed in the header when a file is loaded
+            Given a BDD.md file has been opened with a system description
+            When the user views the header
+            Then the system description is shown in the header
 
-        Scenario: Allow a user to specify the language
-            Given the user is prompted for a programming language
-            When the user inputs a programming language
-            Then the programming language is added to the frontmatter of the bdd file
+        Scenario: user can edit the system description from the header
+            Given a BDD.md file is loaded and the system description is shown
+            When the user edits the system description in the header
+            Then the BDD.md is updated with the new system description
 
-        Scenario: Allow a user to specify the framework
-            Given the user is prompted for a framework
-            When the user inputs a framework
-            Then the framework is added to the frontmatter of the bdd file
+        Scenario: user can edit frontmatter fields from the header
+            Given a BDD.md file is loaded and frontmatter is shown in the header
+            When the user edits a frontmatter field
+            Then the BDD.md is updated with the new value
 
-        Scenario: Allow a user to optionally specify the build command
-            Given the user is prompted for a build command
-            When the user inputs a build command
-            Then the build command is added to the frontmatter of the bdd file
+    Feature: Visual BDD Canvas
 
-        Scenario: Allow a user to not need to provide a build command
-            Given the user is prompted for a build command
-            When the user doesn't know what to put for the build command
-            Then the build should be worked out by the tool and added to the frontmatter of the bdd file
+        Scenario: canvas displays feature and scenario cards from state
+            Given the web app has loaded with BDD document state
+            When the canvas renders with features and scenarios
+            Then each feature is displayed as a card on the canvas
 
-        Scenario: Allow a user to optionally specify the test command
-            Given the user is prompted for a test command
-            When the user inputs a test command
-            Then the test command is added to the frontmatter of the bdd file
+        Scenario: sidebar shows draggable node types
+            Given the web app has loaded
+            When the user views the sidebar
+            Then they can see a draggable Feature node type
 
-        Scenario: Allow a user to not need to provide a test command
-            Given the user is prompted for a test command
-            When the user doesn't know what to put for the test command
-            Then the test command should be worked out by the tool and added to the frontmatter of the bdd file
+        Scenario: user drags a feature onto the canvas
+            Given the web app has loaded
+            When the user drags a Feature node from the sidebar onto the canvas
+            Then a new empty Feature card appears on the canvas
 
-        Scenario: Allow a user to optionally specify the lint command
-            Given the user is prompted for a lint command
-            When the user inputs a lint command
-            Then the lint command is added to the frontmatter of the bdd file
+        Scenario: user drags a scenario into a feature card
+            Given a Feature card exists on the canvas
+            When the user drags a Scenario node from the sidebar into the Feature card
+            Then a new Scenario card appears inside the Feature card
 
-        Scenario: Allow a user to not need to provide a lint command
-            Given the user is prompted for a lint command
-            When the user doesn't know what to put for the lint command
-            Then the lint command should be worked out by the tool and added to the frontmatter of the bdd file
+        Scenario: user edits a card via the properties panel
+            Given a Feature or Scenario card exists on the canvas
+            When the user clicks on the card
+            Then the properties panel shows editable fields for that card
 
-        Scenario: Allow a user to optionally specify the format command
-            Given the user is prompted for a format command
-            When the user inputs a format command
-            Then the format command is added to the frontmatter of the bdd file
+    Feature: BDD.md live sync
 
-        Scenario: Allow a user to not need to provide a format command
-            Given the user is prompted for a format command
-            When the user doesn't know what to put for the format command
-            Then the format command should be worked out by the tool and added to the frontmatter of the bdd file
+        Scenario: user opens a BDD.md file and it populates the canvas
+            Given the web app has loaded
+            When the user opens a BDD.md file
+            Then the canvas populates with the features and scenarios from that file
 
-        Scenario: The birthdate of the project should be added to the frontmatter of the bdd file
-            Given the user has completed the frontmatter questions
-            When the frontmatter is added to the bdd file
-            Then the birthdate of the project should be added to the frontmatter of the bdd file
+        Scenario: canvas writes BDD.md when changes are made
+            Given a BDD.md file has been opened
+            When the user makes a change on the canvas
+            Then the BDD.md file is updated with the new content
 
-        Scenario: The user should be able to not provide a system description through user input
-            Given the user has completed the frontmatter questions
-            When the frontmatter is added to the bdd file
-            Then the user should be prompted with an input field for a description of the system.
-            When the user doesn't know what to put for the system description
-            Then the system description should be left out of the bdd file
+        Scenario: external changes to BDD.md are reflected on the canvas
+            Given a BDD.md file has been opened in the canvas editor
+            When the BDD.md file is modified externally
+            Then the canvas updates to reflect the new content
 
-        Scenario: Adding features to the BDD file through user input
-            Given the user has completed the description of the system
-            When the user is prompted to add a feature
-            Then the user should be able to add a feature to the BDD file.
-            When the feature is added to the BDD file
-            Then the user should be prompted to add a scenario or background to the feature or add another feature to the BDD file.
+    Feature: Deleting nodes
 
-        Scenario: A user wants to be able to provide a Scenario for a feature through user input
-            Given the user has added a feature to the BDD file
-            When the user is prompted to add a scenario to the feature
-            Then the user should be able to add a scenario to the feature in the BDD file.
-            When the scenario is added to the feature in the BDD file
-            Then the user should be prompted to add another scenario to the feature or add another feature to the BDD file.
-        Scenario: a user should be able to add 0 or more backgrounds to a feature through user input
-            Given the user has added a feature to the BDD file
-            When the user is prompted to add a background to the feature
-            Then the user should be able to add a background to the feature in the BDD file.
-            When the background is added to the feature in the BDD file
-            Then the user should be prompted to add another background to the feature or add a scenario to the feature or add another feature to the BDD file.
-        Scenario: Adding scenarios to the feature through user input
-            Given the user has added a feature to the BDD file
-            When the user is prompted to add a scenario to the feature
-            Then the user should be given a guided input for each part of the scenario (scenario name, given, when, then)
-            When the user has completed the guided input for the scenario
-            Then the user should be prompted to add another scenario to the feature or add another feature to the BDD file.
-        Scenario: Cancelling adding a scenario to the feature through user input
-            Given the user has added a feature to the BDD file
-            When the user is prompted to add a scenario to the feature
-            Then the user should be given a guided input for each part of the scenario (scenario name, given, when, then)
-            When the user has wants to go to the previous guided input
-            Then the user should be taken to the previous guided input for the scenario
-            When the user is at the first guided input for the scenario and wants to go back
-            Then the user should be taken back to the prompt asking if they want to add a scenario or feature to the BDD file.
-        Scenario: Cancelling adding a background to the feature through user input
-            Given the user has added a feature to the BDD file
-            When the user is prompted to add a background to the feature
-            Then the user should be given a guided input for each part of the background (background name, given)
-            When the user has wants to go to the previous guided input
-            Then the user should be taken to the previous guided input for the background
-            When the user is at the first guided input for the background and wants to go back
-            Then the user should be taken back to the prompt asking if they want to add a scenario or feature to the BDD file.
-        Scenario: Completing the BDD
-            Given the user has added all the features, scenarios and backgrounds they want to the BDD file
-            When the user is prompted to complete the BDD file
-            Then the user should be able to complete the BDD file and have it saved to their project.
-            When the BDD file is saved to their project
-            Then the user should be given a success message that their BDD file has been created and saved to their project.
+        Scenario: user deletes a feature from the canvas
+            Given a Feature card exists on the canvas
+            When the user clicks the delete button on the Feature card
+            Then the Feature card is removed from the canvas
 
-    Feature: Distribution
-        As a user
-        I want to be able to build and run the tool easily
-        So that I can use it without needing to understand the internals
+        Scenario: user deletes a scenario from a feature
+            Given a Scenario card exists inside a Feature card
+            When the user clicks the delete button on the Scenario card
+            Then the Scenario card is removed from the Feature card
 
-        Scenario: A user can build the tool using a build script
-            Given the user has cloned the repository
-            When the user runs the build script
-            Then the tool should be compiled and ready to use
+    Feature: Background on feature cards
 
-    Feature: Application branding
-        As a user
-        I want to see a sheep mascot when I open the application
-        So that the tool feels welcoming and distinctive
+        Scenario: background is displayed inside its feature card
+            Given a Feature card has a background defined
+            When the canvas renders
+            Then the background is shown inside the Feature card above the scenarios
 
-        Scenario: A sheep mascot is displayed when the application starts
-            Given the user opens the application
-            When the application starts
-            Then a sheep mascot should be displayed in the terminal
+        Scenario: user adds a background to a feature card
+            Given a Feature card exists on the canvas with no background
+            When the user drags a Background node from the sidebar into the Feature card
+            Then a Background card appears inside the Feature card
 
+        Scenario: user edits a background via the properties panel
+            Given a Feature card has a background
+            When the user clicks the background card
+            Then the properties panel shows an editable Given field for the background
+
+        Scenario: user deletes a background from a feature card
+            Given a Feature card has a background
+            When the user clicks the delete button on the background card
+            Then the background is removed from the Feature card
+
+    Feature: LLM chat assistant
+
+        Scenario: user opens the chat panel
+            Given the web app has loaded
+            When the user clicks the chat button
+            Then a chat panel slides open alongside the canvas
+
+        Scenario: user configures an LLM provider with an API key
+            Given the chat panel is open
+            When the user selects a provider (Claude or OpenAI-compatible) and enters an API key
+            Then the chat input becomes active and ready to send messages
+
+        Scenario: user can set a custom OpenAI-compatible base URL
+            Given the chat panel is open and OpenAI-compatible is selected
+            When the user enters a custom base URL
+            Then messages are sent to that endpoint instead of the default
+
+        Scenario: user sends a message and receives a streaming response
+            Given the chat panel is configured with a valid API key
+            When the user types a message and sends it
+            Then the LLM response streams into the chat in real time
+
+        Scenario: LLM receives the current BDD document as context
+            Given a BDD.md file is loaded on the canvas
+            When the user sends any message
+            Then the current BDD document content is included in the system prompt
+
+        Scenario: LLM response proposes a BDD change and the canvas updates
+            Given the chat panel is active with a loaded BDD document
+            When the LLM response contains a valid updated BDD document
+            Then the canvas updates to reflect the proposed changes
+
+        Scenario: invalid API key shows an error in the chat panel
+            Given the chat panel is open
+            When the user sends a message with an invalid API key
+            Then an error message is shown in the chat panel
+
+        Scenario: chat history is maintained for the session
+            Given the user has exchanged messages with the LLM
+            When the user sends another message
+            Then the full conversation history is included in the next request
+
+    Feature: WebRTC collaboration
+
+        Scenario: host creates a collaboration session and receives a share code
+            Given a user has a BDD document loaded on the canvas
+            When the user clicks Share and starts a session
+            Then a short alphanumeric share code is displayed
+
+        Scenario: guest joins a session using a share code
+            Given a host session is active with a share code
+            When a guest enters the share code and joins
+            Then a WebRTC peer connection is established between host and guest
+
+        Scenario: canvas changes sync to all connected peers in real time
+            Given two or more users are in the same session
+            When any user makes a change to the canvas
+            Then the change is broadcast to all other peers within 200ms
+
+        Scenario: session is limited to four simultaneous users
+            Given a session already has four connected users
+            When a fifth user attempts to join
+            Then they are shown a message that the session is full
+
+        Scenario: user presence indicators show who is in the session
+            Given multiple users are in a session
+            When the user views the toolbar
+            Then they can see an avatar or indicator for each connected user
+
+        Scenario: peer disconnects gracefully and session continues
+            Given three users are in a session
+            When one user closes their browser or loses connection
+            Then the remaining users are notified of the disconnection
+
+        Scenario: LLM chat is shared across all session peers
+            Given a session has multiple users and one has configured an LLM key
+            When any user sends a chat message
+            Then the message and the LLM response are visible to all peers
+
+        Scenario: TURN relay is used when direct peer connection fails
+            Given two peers cannot establish a direct connection due to NAT
+            When the ICE negotiation falls back to the TURN server
+            Then the session connects via the relay
