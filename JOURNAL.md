@@ -9,6 +9,25 @@ Bootstrapped typescript/react-vite, react-ink project. Build: npm run build. Tes
 <!-- Agent writes entries here, newest at the top. Never delete entries. -->
 <!-- Format: ## Day N — HH:MM — [short title] -->
 
+## Day 4 — 21:20 — LLM provider configuration
+
+**Scenarios implemented:**
+- user configures an LLM provider with an API key
+- user can set a custom OpenAI-compatible base URL
+
+**What happened:**
+Extended the ChatPanel component with LLM provider configuration UI. Added:
+- Provider selector dropdown (Claude or OpenAI-compatible)
+- API key input (password field)
+- Conditional base URL input (only shows for OpenAI-compatible)
+- Chat message input that becomes active when provider and API key are configured
+
+Both scenarios are tested in a single test file with three test cases covering provider selection, API key entry, and base URL configuration.
+
+**What worked:** The conditional rendering pattern for base URL works cleanly.
+
+**Final state:** 20/34 scenarios covered, 50 tests passing, all lint checks pass.
+
 ## Day 4 — 21:15 — Chat panel UI
 
 **Scenario implemented:**
