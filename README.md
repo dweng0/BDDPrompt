@@ -31,7 +31,7 @@ The generated `BDD.md` file follows the [BAADD](https://github.com/dweng0/BAADD)
 
 ### Try it Online
 
-🌐 **Live Demo**: [https://dweng0.github.io/BAADD](https://dweng0.github.io/BAADD)
+🌐 **Live Demo**: [https://dweng0.github.io/BDDPrompt](https://dweng0.github.io/BDDPrompt)
 
 *(If you forked this repo, update the URL to `https://yourusername.github.io/your-repo-name`)*
 
