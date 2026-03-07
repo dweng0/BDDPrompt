@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import type { BddDocument, FeatureData, ScenarioData } from "./types";
 import Canvas from "./components/Canvas";
 import Sidebar from "./components/Sidebar";
 import PropertiesPanel, { type Selection } from "./components/PropertiesPanel";
 import { parseBdd } from "./utils/bddParser";
+import { generateBddContent } from "./utils/bddWriter";
 
 function emptyDocument(): BddDocument {
   return {
@@ -24,9 +25,30 @@ function emptyDocument(): BddDocument {
 export default function App() {
   const [doc, setDoc] = useState<BddDocument>(emptyDocument);
   const [selection, setSelection] = useState<Selection | null>(null);
+  const fileHandleRef = useRef<FileSystemFileHandle | null>(null);
+
+  const writeToFile = useCallback(async (updatedDoc: BddDocument) => {
+    const handle = fileHandleRef.current;
+    if (!handle) return;
+    try {
+      const writable = await (handle as any).createWritable();
+      await writable.write(generateBddContent(updatedDoc));
+      await writable.close();
+    } catch {
+      // file write failed silently
+    }
+  }, []);
+
+  function setDocAndSave(updater: (prev: BddDocument) => BddDocument) {
+    setDoc((prev) => {
+      const next = updater(prev);
+      writeToFile(next);
+      return next;
+    });
+  }
 
   function addFeature() {
-    setDoc((prev) => ({
+    setDocAndSave((prev) => ({
       ...prev,
       features: [
         ...prev.features,
@@ -36,7 +58,7 @@ export default function App() {
   }
 
   function addScenarioToFeature(featureIndex: number) {
-    setDoc((prev) => {
+    setDocAndSave((prev) => {
       const features = prev.features.map((f, i) => {
         if (i !== featureIndex) return f;
         return {
@@ -60,6 +82,7 @@ export default function App() {
       const [fileHandle] = await (window as any).showOpenFilePicker({
         types: [{ description: "BDD files", accept: { "text/markdown": [".md"] } }],
       });
+      fileHandleRef.current = fileHandle;
       const file = await fileHandle.getFile();
       const text = await file.text();
       setDoc(parseBdd(text));
@@ -70,7 +93,7 @@ export default function App() {
   }
 
   function updateFeature(featureIndex: number, patch: Partial<FeatureData>) {
-    setDoc((prev) => {
+    setDocAndSave((prev) => {
       const features = prev.features.map((f, i) =>
         i === featureIndex ? { ...f, ...patch } : f
       );
@@ -84,7 +107,7 @@ export default function App() {
   }
 
   function updateScenario(featureIndex: number, scenarioIndex: number, patch: Partial<ScenarioData>) {
-    setDoc((prev) => {
+    setDocAndSave((prev) => {
       const features = prev.features.map((f, fi) => {
         if (fi !== featureIndex) return f;
         return {
