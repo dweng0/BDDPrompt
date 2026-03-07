@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+// coverage: canvas writes bddmd when changes are made
 import React from "react";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";

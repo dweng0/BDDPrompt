@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import type { BddDocument, FeatureData, ScenarioData } from "./types";
 import Canvas from "./components/Canvas";
 import Sidebar from "./components/Sidebar";
@@ -22,10 +22,15 @@ function emptyDocument(): BddDocument {
   };
 }
 
-export default function App() {
+type AppProps = {
+  pollInterval?: number;
+};
+
+export default function App({ pollInterval = 2000 }: AppProps) {
   const [doc, setDoc] = useState<BddDocument>(emptyDocument);
   const [selection, setSelection] = useState<Selection | null>(null);
   const fileHandleRef = useRef<FileSystemFileHandle | null>(null);
+  const lastModifiedRef = useRef<number>(0);
 
   const writeToFile = useCallback(async (updatedDoc: BddDocument) => {
     const handle = fileHandleRef.current;
@@ -38,6 +43,24 @@ export default function App() {
       // file write failed silently
     }
   }, []);
+
+  useEffect(() => {
+    const id = setInterval(async () => {
+      const handle = fileHandleRef.current;
+      if (!handle) return;
+      try {
+        const file = await (handle as any).getFile();
+        if (file.lastModified !== lastModifiedRef.current) {
+          lastModifiedRef.current = file.lastModified;
+          const text = await file.text();
+          setDoc(parseBdd(text));
+        }
+      } catch {
+        // poll failed silently
+      }
+    }, pollInterval);
+    return () => clearInterval(id);
+  }, [pollInterval]);
 
   function setDocAndSave(updater: (prev: BddDocument) => BddDocument) {
     setDoc((prev) => {
@@ -84,6 +107,7 @@ export default function App() {
       });
       fileHandleRef.current = fileHandle;
       const file = await fileHandle.getFile();
+      lastModifiedRef.current = file.lastModified;
       const text = await file.text();
       setDoc(parseBdd(text));
       setSelection(null);

@@ -1,6 +1,6 @@
 # BDD Status
 
-Checked 8 scenario(s) across 12 test file(s).
+Checked 8 scenario(s) across 13 test file(s).
 
 
 ## Feature: Visual BDD Canvas
@@ -13,14 +13,9 @@ Checked 8 scenario(s) across 12 test file(s).
 
 ## Feature: BDD.md live sync
 
-- [ ] UNCOVERED: user opens a BDD.md file and it populates the canvas
-- [ ] UNCOVERED: canvas writes BDD.md when changes are made
-- [ ] UNCOVERED: external changes to BDD.md are reflected on the canvas
+- [x] user opens a BDD.md file and it populates the canvas
+- [x] canvas writes BDD.md when changes are made
+- [x] external changes to BDD.md are reflected on the canvas
 
 ---
-**5/8 scenarios covered.**
-
-3 scenario(s) need tests:
-- user opens a BDD.md file and it populates the canvas
-- canvas writes BDD.md when changes are made
-- external changes to BDD.md are reflected on the canvas
+**8/8 scenarios covered.**

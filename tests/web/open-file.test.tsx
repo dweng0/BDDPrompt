@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+// coverage: user opens a bddmd file and it populates the canvas
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
