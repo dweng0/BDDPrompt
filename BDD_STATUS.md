@@ -1,37 +1,30 @@
 # BDD Status
 
-Checked 21 scenario(s) across 4 test file(s).
+Checked 8 scenario(s) across 6 test file(s).
 
 
-## Feature: Add the front matter to the BDD file
+## Feature: Visual BDD Canvas
 
-- [x] Allow a user to specify the language
-- [x] Allow a user to specify the framework
-- [x] Allow a user to optionally specify the build command
-- [x] Allow a user to not need to provide a build command
-- [x] Allow a user to optionally specify the test command
-- [x] Allow a user to not need to provide a test command
-- [x] Allow a user to optionally specify the lint command
-- [x] Allow a user to not need to provide a lint command
-- [x] Allow a user to optionally specify the format command
-- [x] Allow a user to not need to provide a format command
-- [x] The birthdate of the project should be added to the frontmatter of the bdd file
-- [x] The user should be able to not provide a system description through user input
-- [x] Adding features to the BDD file through user input
-- [x] A user wants to be able to provide a Scenario for a feature through user input
-- [x] a user should be able to add 0 or more backgrounds to a feature through user input
-- [x] Adding scenarios to the feature through user input
-- [x] Cancelling adding a scenario to the feature through user input
-- [x] Cancelling adding a background to the feature through user input
-- [x] Completing the BDD
+- [x] canvas displays feature and scenario cards from state
+- [ ] UNCOVERED: sidebar shows draggable node types
+- [ ] UNCOVERED: user drags a feature onto the canvas
+- [ ] UNCOVERED: user drags a scenario into a feature card
+- [ ] UNCOVERED: user edits a card via the properties panel
 
-## Feature: Distribution
+## Feature: BDD.md live sync
 
-- [x] A user can build the tool using a build script
-
-## Feature: Application branding
-
-- [x] A sheep mascot is displayed when the application starts
+- [ ] UNCOVERED: user opens a BDD.md file and it populates the canvas
+- [ ] UNCOVERED: canvas writes BDD.md when changes are made
+- [ ] UNCOVERED: external changes to BDD.md are reflected on the canvas
 
 ---
-**21/21 scenarios covered.**
+**1/8 scenarios covered.**
+
+7 scenario(s) need tests:
+- sidebar shows draggable node types
+- user drags a feature onto the canvas
+- user drags a scenario into a feature card
+- user edits a card via the properties panel
+- user opens a BDD.md file and it populates the canvas
+- canvas writes BDD.md when changes are made
+- external changes to BDD.md are reflected on the canvas
