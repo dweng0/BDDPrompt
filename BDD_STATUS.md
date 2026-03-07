@@ -1,6 +1,6 @@
 # BDD Status
 
-Checked 34 scenario(s) across 22 test file(s).
+Checked 34 scenario(s) across 23 test file(s).
 
 
 ## Feature: Project info in header
@@ -49,8 +49,8 @@ Checked 34 scenario(s) across 22 test file(s).
 
 ## Feature: WebRTC collaboration
 
-- [ ] UNCOVERED: host creates a collaboration session and receives a share code
-- [ ] UNCOVERED: guest joins a session using a share code
+- [x] host creates a collaboration session and receives a share code
+- [x] guest joins a session using a share code
 - [ ] UNCOVERED: canvas changes sync to all connected peers in real time
 - [ ] UNCOVERED: session is limited to four simultaneous users
 - [ ] UNCOVERED: user presence indicators show who is in the session
@@ -59,12 +59,10 @@ Checked 34 scenario(s) across 22 test file(s).
 - [ ] UNCOVERED: TURN relay is used when direct peer connection fails
 
 ---
-**25/34 scenarios covered.**
+**27/34 scenarios covered.**
 
-9 scenario(s) need tests:
+7 scenario(s) need tests:
 - user can set a custom OpenAI-compatible base URL
-- host creates a collaboration session and receives a share code
-- guest joins a session using a share code
 - canvas changes sync to all connected peers in real time
 - session is limited to four simultaneous users
 - user presence indicators show who is in the session

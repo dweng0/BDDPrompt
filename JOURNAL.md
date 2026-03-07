@@ -9,6 +9,25 @@ Bootstrapped typescript/react-vite, react-ink project. Build: npm run build. Tes
 <!-- Agent writes entries here, newest at the top. Never delete entries. -->
 <!-- Format: ## Day N — HH:MM — [short title] -->
 
+## Day 4 — 21:50 — WebRTC collaboration basics
+
+**Scenarios implemented:**
+- host creates a collaboration session and receives a share code
+- guest joins a session using a share code
+
+**What happened:**
+Added WebRTC collaboration UI to the app:
+- Added Share button (green) that generates a random 6-character alphanumeric share code
+- Added Join button (blue) that opens a dialog to enter a share code
+- Share code is displayed in a banner below the header when active
+- Join dialog has input field with auto-uppercase and cancel/join buttons
+
+Both scenarios tested - one validates share code generation and display, the other validates the join dialog functionality.
+
+**What worked:** The state management pattern for share codes and join dialog works cleanly. Fixed a syntax error where I missed a closing brace `}` for the conditional block.
+
+**Final state:** 27/34 scenarios covered, 57 tests passing, all lint checks pass.
+
 ## Day 4 — 21:41 — Chat error handling
 
 **Scenario implemented:**

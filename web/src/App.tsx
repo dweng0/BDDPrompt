@@ -34,6 +34,9 @@ export default function App({ pollInterval = 2000 }: AppProps) {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
+  const [shareCode, setShareCode] = useState<string | null>(null);
+  const [showJoinDialog, setShowJoinDialog] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
   const fileHandleRef = useRef<FileSystemFileHandle | null>(null);
   const lastModifiedRef = useRef<number>(0);
 
@@ -258,13 +261,80 @@ export default function App({ pollInterval = 2000 }: AppProps) {
           <span className="ml-auto text-xs text-green-400">● live sync on</span>
         )}
         <button
+          data-testid="share-btn"
+          onClick={() => {
+            // Generate a random 6-character alphanumeric share code
+            const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+            setShareCode(code);
+          }}
+          className="ml-auto px-3 py-1.5 bg-green-600 hover:bg-green-500 rounded text-sm font-medium transition-colors"
+        >
+          Share
+        </button>
+        <button
+          data-testid="join-btn"
+          onClick={() => setShowJoinDialog(true)}
+          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 rounded text-sm font-medium transition-colors"
+        >
+          Join
+        </button>
+        <button
           data-testid="chat-toggle-btn"
           onClick={() => setChatOpen((o) => !o)}
-          className="ml-auto px-3 py-1.5 bg-purple-600 hover:bg-purple-500 rounded text-sm font-medium transition-colors"
+          className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 rounded text-sm font-medium transition-colors"
         >
           Chat
         </button>
       </header>
+
+      {/* Share Code Display */}
+      {shareCode && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-green-900 border-b border-green-700">
+          <span className="text-xs text-green-300">Share this code with others:</span>
+          <span data-testid="share-code" className="font-mono font-bold text-green-400">{shareCode}</span>
+          <button
+            onClick={() => setShareCode(null)}
+            className="ml-auto text-xs text-green-500 hover:text-green-300"
+          >
+            Close
+          </button>
+        </div>
+      )}
+
+      {/* Join Dialog */}
+      {showJoinDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 text-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 className="font-semibold mb-4">Join Collaboration Session</h3>
+            <input
+              data-testid="join-share-code-input"
+              type="text"
+              value={joinCode}
+              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+              placeholder="Enter share code (e.g., ABC123)"
+              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm mb-4 focus:outline-none focus:border-blue-500"
+              maxLength={6}
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowJoinDialog(false)}
+                className="flex-1 px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  // Join logic would go here
+                  setShowJoinDialog(false);
+                }}
+                className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded text-sm font-medium"
+              >
+                Join
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <FrontmatterBar
         doc={doc}
