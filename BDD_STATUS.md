@@ -1,13 +1,13 @@
 # BDD Status
 
-Checked 8 scenario(s) across 7 test file(s).
+Checked 8 scenario(s) across 8 test file(s).
 
 
 ## Feature: Visual BDD Canvas
 
 - [x] canvas displays feature and scenario cards from state
 - [x] sidebar shows draggable node types
-- [ ] UNCOVERED: user drags a feature onto the canvas
+- [x] user drags a feature onto the canvas
 - [ ] UNCOVERED: user drags a scenario into a feature card
 - [ ] UNCOVERED: user edits a card via the properties panel
 
@@ -18,10 +18,9 @@ Checked 8 scenario(s) across 7 test file(s).
 - [ ] UNCOVERED: external changes to BDD.md are reflected on the canvas
 
 ---
-**2/8 scenarios covered.**
+**3/8 scenarios covered.**
 
-6 scenario(s) need tests:
-- user drags a feature onto the canvas
+5 scenario(s) need tests:
 - user drags a scenario into a feature card
 - user edits a card via the properties panel
 - user opens a BDD.md file and it populates the canvas
