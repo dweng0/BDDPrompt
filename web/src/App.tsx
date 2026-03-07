@@ -5,6 +5,7 @@ import Sidebar from "./components/Sidebar";
 import PropertiesPanel, { type Selection } from "./components/PropertiesPanel";
 // Selection type is extended in PropertiesPanel to include background
 import FrontmatterBar from "./components/FrontmatterBar";
+import ChatPanel from "./components/ChatPanel";
 import { parseBdd } from "./utils/bddParser";
 import { generateBddContent } from "./utils/bddWriter";
 
@@ -32,6 +33,7 @@ export default function App({ pollInterval = 2000 }: AppProps) {
   const [doc, setDoc] = useState<BddDocument>(emptyDocument);
   const [selection, setSelection] = useState<Selection | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
   const fileHandleRef = useRef<FileSystemFileHandle | null>(null);
   const lastModifiedRef = useRef<number>(0);
 
@@ -255,6 +257,13 @@ export default function App({ pollInterval = 2000 }: AppProps) {
         {fileHandleRef.current && (
           <span className="ml-auto text-xs text-green-400">● live sync on</span>
         )}
+        <button
+          data-testid="chat-toggle-btn"
+          onClick={() => setChatOpen((o) => !o)}
+          className="ml-auto px-3 py-1.5 bg-purple-600 hover:bg-purple-500 rounded text-sm font-medium transition-colors"
+        >
+          Chat
+        </button>
       </header>
 
       <FrontmatterBar
@@ -286,6 +295,7 @@ export default function App({ pollInterval = 2000 }: AppProps) {
             onUpdateBackground={updateBackground}
           />
         )}
+        <ChatPanel isOpen={chatOpen} />
       </div>
     </div>
   );

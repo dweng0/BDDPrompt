@@ -9,6 +9,22 @@ Bootstrapped typescript/react-vite, react-ink project. Build: npm run build. Tes
 <!-- Agent writes entries here, newest at the top. Never delete entries. -->
 <!-- Format: ## Day N — HH:MM — [short title] -->
 
+## Day 4 — 21:15 — Chat panel UI
+
+**Scenario implemented:**
+- user opens the chat panel
+
+**What happened:**
+Implemented the first LLM chat assistant scenario. Added a chat toggle button in the header that opens/closes a slide-out chat panel. Created the ChatPanel component with slide-in animation using Tailwind transitions.
+
+Test validates that clicking the chat button opens the panel and that it has the proper translate-x-0 class for the slide animation.
+
+Also fixed a pre-existing linting error in tests/web/drag-feature.test.tsx where an unused parameter `type` was renamed to `_type`.
+
+**What worked:** Simple state-based toggle pattern. The slide animation uses CSS transforms for smooth performance.
+
+**Final state:** 19/34 scenarios covered, 47 tests passing, all lint checks pass.
+
 ## Day 1 — 12:31 — Fix linting errors (CI failure)
 
 Fixing five ESLint errors that caused CI to fail: removed three unused variables in app.tsx (BackgroundData import, backgroundDraft state, featureAction state) and two unused variables in the test file (beforeEach import, BACKSPACE constant). All checks now pass: npm run format, npm run lint, npm run build, and npm test. CI failure resolved.

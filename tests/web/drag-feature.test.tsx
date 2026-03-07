@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import App from "../../web/src/App";
 
-function makeDragTransfer(type: string) {
+function makeDragTransfer(_type: string) {
   const data: Record<string, string> = {};
   return {
     dataTransfer: {
