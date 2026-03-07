@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 type ChatPanelProps = {
   isOpen: boolean;
@@ -6,12 +6,75 @@ type ChatPanelProps = {
 
 type Provider = "claude" | "openai";
 
+type Message = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+};
+
 export default function ChatPanel({ isOpen }: ChatPanelProps) {
   const [provider, setProvider] = useState<Provider>("claude");
   const [apiKey, setApiKey] = useState("");
   const [baseUrl, setBaseUrl] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const isConfigured = provider && apiKey.length > 0;
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = () => {
+    if (!inputValue.trim() || !isConfigured) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: inputValue.trim(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+
+    // Simulate streaming response
+    const responseId = (Date.now() + 1).toString();
+    setMessages((prev) => [
+      ...prev,
+      { id: responseId, role: "assistant", content: "" },
+    ]);
+
+    const responseText = "I'm a simulated assistant response. Streaming functionality will be implemented with real API integration.";
+    let charIndex = 0;
+
+    const streamInterval = setInterval(() => {
+      if (charIndex >= responseText.length) {
+        clearInterval(streamInterval);
+        return;
+      }
+
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === responseId
+            ? { ...msg, content: responseText.slice(0, charIndex + 1) }
+            : msg
+        )
+      );
+      charIndex++;
+    }, 20);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
 
   return (
     <aside
@@ -70,15 +133,36 @@ export default function ChatPanel({ isOpen }: ChatPanelProps) {
             )}
           </div>
 
-          {/* Chat Area */}
-          <div className="flex-1 overflow-y-auto p-4">
-            {!isConfigured ? (
+          {/* Chat History */}
+          <div data-testid="chat-history" className="flex-1 overflow-y-auto p-4 space-y-3">
+            {messages.length === 0 ? (
               <p className="text-sm text-gray-400">
-                Configure a provider and API key to start chatting
+                {isConfigured
+                  ? "Chat ready. Start typing..."
+                  : "Configure a provider and API key to start chatting"}
               </p>
             ) : (
-              <p className="text-sm text-gray-400">Chat ready. Start typing...</p>
+              messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
+                      msg.role === "user"
+                        ? "bg-purple-600 text-white"
+                        : "bg-gray-800 text-gray-200"
+                    }`}
+                  >
+                    {msg.content}
+                    {msg.role === "assistant" && msg.content.length > 0 && (
+                      <span className="inline-block w-2 h-4 ml-0.5 bg-purple-400 animate-pulse" />
+                    )}
+                  </div>
+                </div>
+              ))
             )}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Message Input */}
@@ -86,6 +170,9 @@ export default function ChatPanel({ isOpen }: ChatPanelProps) {
             <input
               data-testid="chat-message-input"
               type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
               disabled={!isConfigured}
               placeholder={isConfigured ? "Type a message..." : "Configure API key first"}
               className={`

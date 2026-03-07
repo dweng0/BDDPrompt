@@ -1,6 +1,6 @@
 # BDD Status
 
-Checked 34 scenario(s) across 18 test file(s).
+Checked 34 scenario(s) across 19 test file(s).
 
 
 ## Feature: Project info in header
@@ -41,11 +41,11 @@ Checked 34 scenario(s) across 18 test file(s).
 - [x] user opens the chat panel
 - [x] user configures an LLM provider with an API key
 - [ ] UNCOVERED: user can set a custom OpenAI-compatible base URL
-- [ ] UNCOVERED: user sends a message and receives a streaming response
+- [x] user sends a message and receives a streaming response
 - [ ] UNCOVERED: LLM receives the current BDD document as context
 - [ ] UNCOVERED: LLM response proposes a BDD change and the canvas updates
 - [ ] UNCOVERED: invalid API key shows an error in the chat panel
-- [ ] UNCOVERED: chat history is maintained for the session
+- [x] chat history is maintained for the session
 
 ## Feature: WebRTC collaboration
 
@@ -59,15 +59,13 @@ Checked 34 scenario(s) across 18 test file(s).
 - [ ] UNCOVERED: TURN relay is used when direct peer connection fails
 
 ---
-**20/34 scenarios covered.**
+**22/34 scenarios covered.**
 
-14 scenario(s) need tests:
+12 scenario(s) need tests:
 - user can set a custom OpenAI-compatible base URL
-- user sends a message and receives a streaming response
 - LLM receives the current BDD document as context
 - LLM response proposes a BDD change and the canvas updates
 - invalid API key shows an error in the chat panel
-- chat history is maintained for the session
 - host creates a collaboration session and receives a share code
 - guest joins a session using a share code
 - canvas changes sync to all connected peers in real time

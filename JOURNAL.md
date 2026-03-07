@@ -9,6 +9,26 @@ Bootstrapped typescript/react-vite, react-ink project. Build: npm run build. Tes
 <!-- Agent writes entries here, newest at the top. Never delete entries. -->
 <!-- Format: ## Day N — HH:MM — [short title] -->
 
+## Day 4 — 21:24 — Chat streaming and history
+
+**Scenarios implemented:**
+- user sends a message and receives a streaming response
+- chat history is maintained for the session
+
+**What happened:**
+Extended ChatPanel with full chat functionality:
+- Added message state management with user and assistant roles
+- Implemented chat history display with user messages (purple, right-aligned) and assistant responses (gray, left-aligned)
+- Added simulated streaming response with character-by-character animation and cursor blink
+- Added auto-scroll to bottom on new messages
+- Enter key support for sending messages
+
+The streaming simulation uses setInterval to gradually reveal the response text, giving the user feedback that something is happening while a real API integration would be processing.
+
+**What worked:** The message state pattern with separate user/assistant roles works cleanly. Auto-scroll with useRef ensures the latest message is always visible.
+
+**Final state:** 22/34 scenarios covered, 52 tests passing, all lint checks pass.
+
 ## Day 4 — 21:20 — LLM provider configuration
 
 **Scenarios implemented:**
