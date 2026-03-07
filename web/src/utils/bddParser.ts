@@ -41,6 +41,13 @@ export function parseBdd(text: string): BddDocument {
     const name = lines[0].trim();
     const scenarios: ScenarioData[] = [];
 
+    const backgroundMatch = block.match(/^\s{8}Background:[^\n]*\n([\s\S]*?)(?=\s{8}Scenario:|\s{4}Feature:|$)/m);
+    let background = null;
+    if (backgroundMatch) {
+      const given = (backgroundMatch[1].match(/Given\s+(.+)/) ?? [])[1]?.trim() ?? "";
+      background = { given };
+    }
+
     const scenarioBlocks = block.split(/^\s{8}Scenario:/m).slice(1);
     for (const sb of scenarioBlocks) {
       const sbLines = sb.split("\n");
@@ -51,7 +58,7 @@ export function parseBdd(text: string): BddDocument {
       scenarios.push({ name: scenarioName, given, when, then });
     }
 
-    features.push({ name, background: null, scenarios });
+    features.push({ name, background, scenarios });
   }
 
   return { frontmatter, system_description, features };
