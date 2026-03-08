@@ -7,3 +7,4 @@
 - **Day 2** — 2026-03-05 — Build script (issue #4) + sheep mascot (issue #3). 21/21 scenarios covered.
 - **Day 1** — 2026-03-05 — Bootstrap. All 19 original BDD scenarios implemented and passing.
 | 1 | 2026-03-06 | 12:31 | 21/21 | Day 1 (12:31): linting fixes for CI failure |
+| 2 | 2026-03-08 | 13:34 | 28/34 | Day 2 (13:34): fix linting errors for type safety |
