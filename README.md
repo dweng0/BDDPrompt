@@ -2,6 +2,9 @@
 
 <img src="cute_sheep.svg" width="120" alt="BAADD sheep mascot"/>
 
+
+[![Evolution](https://github.com/dweng0/BDDPrompt/actions/workflows/evolve.yml/badge.svg)](https://github.com/dweng0/Mooch/actions/workflows/evolve.yml)
+[![BAADD](baadd.svg)](https://github.com/dweng0/BAADD)
 # 🌟 bddprompt
 
 **A delightful visual editor for BDD specifications**
