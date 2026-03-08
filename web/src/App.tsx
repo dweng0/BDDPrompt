@@ -305,7 +305,7 @@ export default function App({ pollInterval = 2000 }: AppProps) {
           Save As
         </button>
         {fileHandleRef.current && (
-          <span className="ml-auto text-xs text-green-400">● live sync — {fileName}</span>
+          <span className="ml-auto text-xs text-green-400">● live sync — <span data-testid="current-filename">{fileName}</span></span>
         )}
 
         {/* Presence indicators */}
