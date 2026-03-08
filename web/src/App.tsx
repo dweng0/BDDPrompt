@@ -132,6 +132,22 @@ export default function App({ pollInterval = 2000 }: AppProps) {
     }
   }
 
+  async function handleSaveAs() {
+    try {
+      const fileHandle = await (window as any).showSaveFilePicker({
+        suggestedName: "BDD.md",
+        types: [{ description: "BDD files", accept: { "text/markdown": [".md"] } }],
+      });
+      fileHandleRef.current = fileHandle;
+      const file = await fileHandle.getFile();
+      lastModifiedRef.current = file.lastModified;
+      setFileName(fileHandle.name);
+      await writeToFile(doc);
+    } catch {
+      // user cancelled
+    }
+  }
+
   function updateFrontmatter(patch: Partial<BddDocument["frontmatter"]>) {
     setDocAndSave((prev) => ({
       ...prev,
@@ -281,11 +297,15 @@ export default function App({ pollInterval = 2000 }: AppProps) {
         >
           Open BDD.md
         </button>
-        {fileName && (
-          <span className="text-sm text-gray-400">{fileName}</span>
-        )}
+        <button
+          data-testid="save-as-btn"
+          onClick={handleSaveAs}
+          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded text-sm font-medium transition-colors"
+        >
+          Save As
+        </button>
         {fileHandleRef.current && (
-          <span className="ml-auto text-xs text-green-400">● live sync on</span>
+          <span className="ml-auto text-xs text-green-400">● live sync — {fileName}</span>
         )}
 
         {/* Presence indicators */}

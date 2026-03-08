@@ -80,6 +80,7 @@ async function* streamAnthropic(
 async function* streamOpenAI(
   apiKey: string,
   baseUrl: string,
+  model: string,
   systemPrompt: string,
   messages: { role: string; content: string }[]
 ): AsyncGenerator<string, void, unknown> {
@@ -91,7 +92,7 @@ async function* streamOpenAI(
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4",
+      model: model || "gpt-4",
       stream: true,
       messages: [{ role: "system", content: systemPrompt }, ...messages],
     }),
@@ -130,10 +131,30 @@ function extractBddBlock(text: string): string | null {
   return match ? match[1] : null;
 }
 
+const LS_KEY = "bddprompt-chat-config";
+
+function loadConfig() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as { provider: Provider; apiKey: string; baseUrl: string; model: string };
+  } catch {
+    return null;
+  }
+}
+
+function saveConfig(provider: Provider, apiKey: string, baseUrl: string, model: string) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ provider, apiKey, baseUrl, model }));
+  } catch {}
+}
+
 export default function ChatPanel({ isOpen, doc, onDocUpdate }: ChatPanelProps) {
-  const [provider, setProvider] = useState<Provider>("claude");
-  const [apiKey, setApiKey] = useState("");
-  const [baseUrl, setBaseUrl] = useState("");
+  const saved = loadConfig();
+  const [provider, setProvider] = useState<Provider>(saved?.provider ?? "claude");
+  const [apiKey, setApiKey] = useState(saved?.apiKey ?? "");
+  const [baseUrl, setBaseUrl] = useState(saved?.baseUrl ?? "");
+  const [model, setModel] = useState(saved?.model ?? "");
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -141,6 +162,10 @@ export default function ChatPanel({ isOpen, doc, onDocUpdate }: ChatPanelProps) 
   const abortRef = useRef<AbortController | null>(null);
 
   const isConfigured = provider && apiKey.length > 0;
+
+  useEffect(() => {
+    saveConfig(provider, apiKey, baseUrl, model);
+  }, [provider, apiKey, baseUrl, model]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -170,7 +195,7 @@ export default function ChatPanel({ isOpen, doc, onDocUpdate }: ChatPanelProps) 
       const stream =
         provider === "claude"
           ? streamAnthropic(apiKey, systemPrompt, conversationMessages)
-          : streamOpenAI(apiKey, baseUrl, systemPrompt, conversationMessages);
+          : streamOpenAI(apiKey, baseUrl, model, systemPrompt, conversationMessages);
 
       let fullText = "";
       for await (const chunk of stream) {
@@ -254,17 +279,31 @@ export default function ChatPanel({ isOpen, doc, onDocUpdate }: ChatPanelProps) 
             </div>
 
             {provider === "openai" && (
-              <div>
-                <label className="text-xs text-gray-400 block mb-1">Base URL (optional)</label>
-                <input
-                  data-testid="chat-base-url-input"
-                  type="text"
-                  value={baseUrl}
-                  onChange={(e) => setBaseUrl(e.target.value)}
-                  placeholder="https://api.openai.com/v1"
-                  className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-purple-500"
-                />
-              </div>
+              <>
+                <div>
+                  <label className="text-xs text-gray-400 block mb-1">Base URL (optional)</label>
+                  <input
+                    data-testid="chat-base-url-input"
+                    type="text"
+                    value={baseUrl}
+                    onChange={(e) => setBaseUrl(e.target.value)}
+                    placeholder="https://api.openai.com/v1"
+                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-400 block mb-1">Model</label>
+                  <input
+                    data-testid="chat-model-input"
+                    type="text"
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    placeholder="gpt-4"
+                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-purple-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Model names may be case-sensitive</p>
+                </div>
+              </>
             )}
           </div>
 
