@@ -40,7 +40,7 @@ Checked 34 scenario(s) across 23 test file(s).
 
 - [x] user opens the chat panel
 - [x] user configures an LLM provider with an API key
-- [ ] UNCOVERED: user can set a custom OpenAI-compatible base URL
+- [x] user can set a custom OpenAI-compatible base URL
 - [x] user sends a message and receives a streaming response
 - [x] LLM receives the current BDD document as context
 - [x] LLM response proposes a BDD change and the canvas updates
@@ -59,10 +59,9 @@ Checked 34 scenario(s) across 23 test file(s).
 - [ ] UNCOVERED: TURN relay is used when direct peer connection fails
 
 ---
-**27/34 scenarios covered.**
+**28/34 scenarios covered.**
 
-7 scenario(s) need tests:
-- user can set a custom OpenAI-compatible base URL
+6 scenario(s) need tests:
 - canvas changes sync to all connected peers in real time
 - session is limited to four simultaneous users
 - user presence indicators show who is in the session

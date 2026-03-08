@@ -50,7 +50,10 @@ describe("external changes to BDD.md are reflected on the canvas", () => {
 
   it("canvas updates when BDD.md is modified externally", async () => {
     let callCount = 0;
-    const writable = { write: vi.fn(() => Promise.resolve()), close: vi.fn(() => Promise.resolve()) };
+    const writable = {
+      write: vi.fn(() => Promise.resolve()),
+      close: vi.fn(() => Promise.resolve()),
+    };
     const fileHandle = {
       getFile: vi.fn(() => {
         callCount++;
@@ -69,7 +72,9 @@ describe("external changes to BDD.md are reflected on the canvas", () => {
       fireEvent.click(screen.getByTestId("open-file-btn"));
     });
 
-    expect(screen.queryByText("Externally Added Feature")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Externally Added Feature"),
+    ).not.toBeInTheDocument();
 
     // Advance past the poll interval to trigger re-read
     await act(async () => {

@@ -24,8 +24,18 @@ describe("canvas displays feature and scenario cards from state", () => {
         name: "User Authentication",
         background: null,
         scenarios: [
-          { name: "Login success", given: "a user", when: "they log in", then: "they are authenticated" },
-          { name: "Login failure", given: "a user", when: "they use wrong password", then: "they see an error" },
+          {
+            name: "Login success",
+            given: "a user",
+            when: "they log in",
+            then: "they are authenticated",
+          },
+          {
+            name: "Login failure",
+            given: "a user",
+            when: "they use wrong password",
+            then: "they see an error",
+          },
         ],
       },
     ];

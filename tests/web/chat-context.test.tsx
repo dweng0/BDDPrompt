@@ -1,6 +1,12 @@
 // @vitest-environment happy-dom
 import React from "react";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import App from "../../web/src/App";
 
@@ -26,7 +32,10 @@ function mockFile(content: string) {
   const fileHandle = {
     getFile: () => Promise.resolve(file),
     createWritable: () =>
-      Promise.resolve({ write: () => Promise.resolve(), close: () => Promise.resolve() }),
+      Promise.resolve({
+        write: () => Promise.resolve(),
+        close: () => Promise.resolve(),
+      }),
   };
   return fileHandle;
 }
@@ -58,13 +67,14 @@ describe("LLM receives the current BDD document as context", () => {
       writable: true,
     });
 
-    let capturedBody: any = null;
+    let capturedBody: Record<string, unknown> | null = null;
     vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
-      capturedBody = JSON.parse(init?.body as string);
+      const body = init?.body as string;
+      capturedBody = JSON.parse(body);
       return {
         ok: true,
         body: makeAnthropicStream("Got your message!"),
-      } as any;
+      } satisfies Response;
     });
 
     render(<App />);
@@ -90,11 +100,15 @@ describe("LLM receives the current BDD document as context", () => {
 
     // Send a message
     const messageInput = screen.getByTestId("chat-message-input");
-    fireEvent.change(messageInput, { target: { value: "What features are in this project?" } });
+    fireEvent.change(messageInput, {
+      target: { value: "What features are in this project?" },
+    });
     fireEvent.keyDown(messageInput, { key: "Enter" });
 
     // The message should appear in chat
-    expect(screen.getByText("What features are in this project?")).toBeInTheDocument();
+    expect(
+      screen.getByText("What features are in this project?"),
+    ).toBeInTheDocument();
 
     // Wait for fetch to be called
     await waitFor(() => {

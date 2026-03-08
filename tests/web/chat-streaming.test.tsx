@@ -38,7 +38,7 @@ describe("user sends a message and receives a streaming response", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
       body: makeAnthropicStream("Hello from the LLM assistant!"),
-    } as any);
+    } satisfies Response);
 
     render(<App />);
 
@@ -63,7 +63,9 @@ describe("user sends a message and receives a streaming response", () => {
 
     // Streamed response should appear
     await waitFor(() => {
-      expect(screen.getByText("Hello from the LLM assistant!")).toBeInTheDocument();
+      expect(
+        screen.getByText("Hello from the LLM assistant!"),
+      ).toBeInTheDocument();
     });
   });
 });
@@ -73,7 +75,7 @@ describe("chat history is maintained for the session", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
       body: makeAnthropicStream("Response 1"),
-    } as any);
+    } satisfies Response);
 
     render(<App />);
 

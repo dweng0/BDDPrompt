@@ -17,7 +17,7 @@ describe("invalid API key shows an error in the chat panel", () => {
         Promise.resolve({
           error: { message: "Invalid API key. Check your credentials." },
         }),
-    } as any);
+    } satisfies Response);
 
     render(<App />);
 
@@ -42,9 +42,7 @@ describe("invalid API key shows an error in the chat panel", () => {
 
     // An error message should appear in the chat
     await waitFor(() => {
-      expect(
-        screen.getByText(/Error:.*Invalid API key/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Error:.*Invalid API key/i)).toBeInTheDocument();
     });
   });
 });

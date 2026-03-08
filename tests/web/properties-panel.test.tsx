@@ -8,7 +8,9 @@ function makeDragTransfer(type: string) {
   const data: Record<string, string> = { "bdd/node-type": type };
   return {
     dataTransfer: {
-      setData: (key: string, val: string) => { data[key] = val; },
+      setData: (key: string, val: string) => {
+        data[key] = val;
+      },
       getData: (key: string) => data[key] ?? "",
     },
   };

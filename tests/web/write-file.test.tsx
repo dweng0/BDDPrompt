@@ -21,7 +21,10 @@ System: a sample system
 function mockWritableFileSystem(content: string) {
   const written: string[] = [];
   const writable = {
-    write: vi.fn((data: string) => { written.push(data); return Promise.resolve(); }),
+    write: vi.fn((data: string) => {
+      written.push(data);
+      return Promise.resolve();
+    }),
     close: vi.fn(() => Promise.resolve()),
   };
   const file = new File([content], "BDD.md", { type: "text/markdown" });

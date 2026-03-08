@@ -1,6 +1,12 @@
 // @vitest-environment happy-dom
 import React from "react";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import App from "../../web/src/App";
 
@@ -89,7 +95,7 @@ describe("LLM response proposes a BDD change and the canvas updates", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
       body: makeAnthropicStream(responseText),
-    } as any);
+    } satisfies Response);
 
     render(<App />);
 

@@ -10,7 +10,9 @@ function makeDragTransfer(type: string) {
   const data: Record<string, string> = { "bdd/node-type": type };
   return {
     dataTransfer: {
-      setData: (_k: string, v: string) => { data[_k] = v; },
+      setData: (_k: string, v: string) => {
+        data[_k] = v;
+      },
       getData: (k: string) => data[k] ?? "",
     },
   };
@@ -34,8 +36,12 @@ describe("background is displayed inside its feature card", () => {
     ];
     render(<Canvas features={features} />);
     const featureCard = screen.getByTestId("feature-card-Auth");
-    expect(within(featureCard).getByTestId("background-card")).toBeInTheDocument();
-    expect(within(featureCard).getByText(/the database is seeded/)).toBeInTheDocument();
+    expect(
+      within(featureCard).getByTestId("background-card"),
+    ).toBeInTheDocument();
+    expect(
+      within(featureCard).getByText(/the database is seeded/),
+    ).toBeInTheDocument();
   });
 });
 

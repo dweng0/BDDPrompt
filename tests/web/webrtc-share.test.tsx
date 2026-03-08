@@ -1,14 +1,22 @@
 // @vitest-environment happy-dom
 import React from "react";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import App from "../../web/src/App";
 
 // Mock PeerJS so it works in happy-dom without a real signaling server
 vi.mock("peerjs", () => {
+  type Callback = (...args: unknown[]) => void;
+
   class MockPeer {
     id: string;
-    private listeners: Record<string, ((...args: any[]) => void)[]> = {};
+    private listeners: Record<string, Callback[]> = {};
 
     constructor(id?: string) {
       this.id = id ?? "MOCK01";
@@ -18,21 +26,22 @@ vi.mock("peerjs", () => {
       });
     }
 
-    on(event: string, cb: (...args: any[]) => void) {
+    on(event: string, cb: Callback) {
       if (!this.listeners[event]) this.listeners[event] = [];
       this.listeners[event].push(cb);
       return this;
     }
 
-    _emit(event: string, ...args: any[]) {
+    _emit(event: string, ...args: unknown[]) {
       (this.listeners[event] ?? []).forEach((cb) => cb(...args));
     }
 
     connect(_peerId: string) {
-      const connListeners: Record<string, ((...args: any[]) => void)[]> = {};
+      type ConnectionCallback = (...args: unknown[]) => void;
+      const connListeners: Record<string, ConnectionCallback[]> = {};
       const conn = {
         peer: _peerId,
-        on(event: string, cb: (...args: any[]) => void) {
+        on(event: string, cb: ConnectionCallback) {
           if (!connListeners[event]) connListeners[event] = [];
           connListeners[event].push(cb);
           if (event === "open") {

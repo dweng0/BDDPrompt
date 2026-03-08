@@ -29,9 +29,15 @@ describe("frontmatter is displayed in the header when a file is loaded", () => {
   it("shows language and framework in the header after opening a file", async () => {
     mockFile(SAMPLE_BDD);
     render(<App />);
-    await act(async () => { fireEvent.click(screen.getByTestId("open-file-btn")); });
-    expect(screen.getByTestId("header-language")).toHaveTextContent("typescript");
-    expect(screen.getByTestId("header-framework")).toHaveTextContent("react, vite");
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("open-file-btn"));
+    });
+    expect(screen.getByTestId("header-language")).toHaveTextContent(
+      "typescript",
+    );
+    expect(screen.getByTestId("header-framework")).toHaveTextContent(
+      "react, vite",
+    );
   });
 });
 
@@ -41,8 +47,12 @@ describe("system description is displayed in the header when a file is loaded", 
   it("shows system description in the header after opening a file", async () => {
     mockFile(SAMPLE_BDD);
     render(<App />);
-    await act(async () => { fireEvent.click(screen.getByTestId("open-file-btn")); });
-    expect(screen.getByTestId("header-system")).toHaveValue("a tool for managing projects");
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("open-file-btn"));
+    });
+    expect(screen.getByTestId("header-system")).toHaveValue(
+      "a tool for managing projects",
+    );
   });
 });
 
@@ -52,10 +62,16 @@ describe("user can edit the system description from the header", () => {
   it("updates the document system description when edited in the header", async () => {
     mockFile(SAMPLE_BDD);
     render(<App />);
-    await act(async () => { fireEvent.click(screen.getByTestId("open-file-btn")); });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("open-file-btn"));
+    });
     const input = screen.getByTestId("header-system");
-    fireEvent.change(input, { target: { value: "an updated system description" } });
-    expect(screen.getByTestId("header-system")).toHaveValue("an updated system description");
+    fireEvent.change(input, {
+      target: { value: "an updated system description" },
+    });
+    expect(screen.getByTestId("header-system")).toHaveValue(
+      "an updated system description",
+    );
   });
 });
 
@@ -65,7 +81,9 @@ describe("user can edit frontmatter fields from the header", () => {
   it("updates language when edited in the header", async () => {
     mockFile(SAMPLE_BDD);
     render(<App />);
-    await act(async () => { fireEvent.click(screen.getByTestId("open-file-btn")); });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("open-file-btn"));
+    });
     const input = screen.getByTestId("header-language-input");
     fireEvent.change(input, { target: { value: "python" } });
     expect(screen.getByTestId("header-language-input")).toHaveValue("python");
