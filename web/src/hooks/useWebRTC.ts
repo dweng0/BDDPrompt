@@ -75,7 +75,19 @@ export function useWebRTC({ onDocUpdate, onChatMessage }: UseWebRTCOptions = {})
 
   const startHost = useCallback(async (): Promise<string> => {
     const code = generateShareCode();
-    const peer = new Peer(code);
+    // Configure with TURN server for fallback when direct connection fails
+    const peer = new Peer(code, {
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          {
+            urls: "turn:global.turn.twilio.com:3478",
+            username: process.env.TURN_USERNAME,
+            credential: process.env.TURN_CREDENTIAL,
+          },
+        ],
+      },
+    });
     peerRef.current = peer;
 
     await new Promise<void>((resolve, reject) => {
@@ -100,7 +112,19 @@ export function useWebRTC({ onDocUpdate, onChatMessage }: UseWebRTCOptions = {})
 
   const joinSession = useCallback(
     async (code: string): Promise<void> => {
-      const peer = new Peer();
+      // Configure with TURN server for fallback when direct connection fails
+      const peer = new Peer(undefined, {
+        config: {
+          iceServers: [
+            { urls: "stun:stun.l.google.com:19302" },
+            {
+              urls: "turn:global.turn.twilio.com:3478",
+              username: process.env.TURN_USERNAME,
+              credential: process.env.TURN_CREDENTIAL,
+            },
+          ],
+        },
+      });
       peerRef.current = peer;
 
       await new Promise<void>((resolve, reject) => {

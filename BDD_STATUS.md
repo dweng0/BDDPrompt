@@ -1,6 +1,6 @@
 # BDD Status
 
-Checked 34 scenario(s) across 23 test file(s).
+Checked 34 scenario(s) across 24 test file(s).
 
 
 ## Feature: Project info in header
@@ -51,20 +51,12 @@ Checked 34 scenario(s) across 23 test file(s).
 
 - [x] host creates a collaboration session and receives a share code
 - [x] guest joins a session using a share code
-- [ ] UNCOVERED: canvas changes sync to all connected peers in real time
-- [ ] UNCOVERED: session is limited to four simultaneous users
-- [ ] UNCOVERED: user presence indicators show who is in the session
-- [ ] UNCOVERED: peer disconnects gracefully and session continues
-- [ ] UNCOVERED: LLM chat is shared across all session peers
-- [ ] UNCOVERED: TURN relay is used when direct peer connection fails
+- [x] canvas changes sync to all connected peers in real time
+- [x] session is limited to four simultaneous users
+- [x] user presence indicators show who is in the session
+- [x] peer disconnects gracefully and session continues
+- [x] LLM chat is shared across all session peers
+- [x] TURN relay is used when direct peer connection fails
 
 ---
-**28/34 scenarios covered.**
-
-6 scenario(s) need tests:
-- canvas changes sync to all connected peers in real time
-- session is limited to four simultaneous users
-- user presence indicators show who is in the session
-- peer disconnects gracefully and session continues
-- LLM chat is shared across all session peers
-- TURN relay is used when direct peer connection fails
+**34/34 scenarios covered.**
