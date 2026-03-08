@@ -1,5 +1,27 @@
 # Journal
 
+## Day 2 — 16:07 — Complete WebRTC collaboration scenarios (6/6 covered)
+
+Implemented TURN relay configuration and all 6 uncovered WebRTC collaboration scenarios:
+- canvas changes sync to all connected peers in real time
+- session is limited to four simultaneous users  
+- user presence indicators show who is in the session
+- peer disconnects gracefully and session continues
+- LLM chat is shared across all session peers
+- TURN relay is used when direct peer connection fails
+
+**Changes:**
+- Added TURN server configuration (`stun:stun.l.google.com:19302` and `turn:global.turn.twilio.com:3478`) to `useWebRTC.ts`
+- Added ICE server config with STUN and TURN servers for fallback connections
+- Created new test file `tests/web/webrtc-distribution.test.tsx` with 12 tests covering all WebRTC scenarios
+- All 69 tests pass, build succeeds, lint passes
+- BDD status: 34/34 scenarios covered
+
+**Files modified:**
+- `web/src/hooks/useWebRTC.ts` — TURN server configuration
+- `tests/web/webrtc-distribution.test.tsx` — new test file
+- `BDD_STATUS.md` — coverage update
+
 ## Day 2 — 13:34 — Fix linting errors for type safety
 
 Fixed 11 `@typescript-eslint/no-explicit-any` linting errors across 7 test files by replacing `as any` assertions with proper types like `Response` and `Record<string, unknown>`.
