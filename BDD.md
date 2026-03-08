@@ -1,10 +1,10 @@
 ---
 language: typescript
 framework: vite, react, dnd-kit, tailwind
-build_cmd: build
-test_cmd: test
-lint_cmd: lint
-fmt_cmd: fmt
+build_cmd: npm run build
+test_cmd: npm run test
+lint_cmd: npm run lint
+fmt_cmd: npm run format
 birth_date: 2026-03-06
 ---
 

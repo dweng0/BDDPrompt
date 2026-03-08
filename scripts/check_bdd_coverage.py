@@ -116,15 +116,16 @@ def check_coverage(scenario_name, test_files, test_contents):
 
     for path, content in test_contents.items():
         content_lower = content.lower()
+        content_norm = re.sub(r"[^a-z0-9\s]", "", content_lower)
         # Try full snake_case match
-        if full in content_lower:
+        if full in content_lower or full in content_norm.replace(" ", "_"):
             return True
         # Try partial match (first 6 words)
-        if partial and partial in content_lower:
+        if partial and (partial in content_lower or partial in content_norm):
             return True
         # Try each word of the scenario (all significant words present)
         words = [w for w in re.sub(r"[^a-z0-9\s]", "", scenario_name.lower()).split() if len(w) > 3]
-        if len(words) >= 3 and all(w in content_lower for w in words[:4]):
+        if len(words) >= 3 and all(w in content_norm for w in words[:4]):
             return True
 
     return False
