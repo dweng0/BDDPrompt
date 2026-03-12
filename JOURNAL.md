@@ -1,33 +1,8 @@
 # Journal
 
-## Day 6 — 08:15 — Project verified complete
-
-Session check confirmed all 34 BDD scenarios are covered and passing (23 test files, 69 tests). All checks (build, lint, test, format) succeeded with no changes required. No open issues today.
-
----
-
-## Day 6 — 00:24 — Project complete
-
-All BDD scenarios are covered and passing. No open issues. Nothing to implement this session. Exiting.
-
----
-
-## Day 5 — 16:20 — Project complete
-
-All BDD scenarios are covered and passing. No open issues. Nothing to implement this session. Exiting.
-
----
-
-## Day 5 — 08:14 — Project verified complete
-
-Session check confirmed all 34 BDD scenarios are covered and passing (23 test files, 69 tests). All checks (build, lint, test, format) succeeded with no changes required. No open issues today.
-
----
-
-## Day 5 — 00:26 — Project complete
-
-## Day 4 — 16:24 — Project complete
+<!-- Write entries at the top, below this header. -->
+## Day 6 — 16:26 — Project complete
 
 All BDD scenarios are covered and passing. No open issues. Nothing to implement this session.
 
----
+Ran all checks — 69 tests passing, linting clean, formatting correct, build successful. BDD_STATUS.md confirms 34/34 scenarios covered.
