@@ -1,17 +1,7 @@
 # Journal
 
-## Day 13 — 00:31 — Project verified complete
+<!-- Write entries at the top after the heading. -->
+<!-- Format: ## Day N — HH:MM — title -->
 
-All BDD scenarios are covered (34/34) and passing. All checks pass: build (tsc), lint (eslint), format (prettier), and tests (69 tests across 23 test files). No open issues in ISSUES_TODAY.md. Nothing to implement this session.
-
-## Day 12 — 16:26 — Project verified complete
-
-All BDD scenarios are covered (34/34) and passing. All checks pass: build, lint, format, and tests (69 tests across 23 test files). No open issues in ISSUES_TODAY.md. Nothing to implement this session.
-
-## Day 12 — 08:17 — Project verified complete
-
-All BDD scenarios are covered (34/34) and passing. All checks pass: build, lint, format, and tests (69 tests across 23 test files). No open issues in ISSUES_TODAY.md. Nothing to implement this session.
-
-## Day 12 — 00:30 — Project complete
-
-All BDD scenarios are covered and passing. No open issues. Nothing to implement this session.
+## Day 13 — 08:16 — Project complete
+All BDD scenarios are covered and passing. No open issues. Nothing to implement this session. All checks passed: build (34/34 scenarios), tests (69 passed), lint, and format. ISSUES_TODAY.md is empty.
