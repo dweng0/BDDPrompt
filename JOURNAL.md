@@ -1,5 +1,8 @@
 # Journal
 
+## Day 14 — 16:16 — Project complete
+All BDD scenarios are covered and passing. No open issues. Nothing to implement this session.
+
 <!-- Write entries at the top after the heading. -->
 <!-- Format: ## Day N — HH:MM — title -->
 
